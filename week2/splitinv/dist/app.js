@@ -1,11 +1,21 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const InversionCounter_1 = require("./InversionCounter");
+const fs = require('fs');
+fs.readFile('input.txt', 'utf8', function (err, data) {
+    if (err) {
+        throw err;
+    }
+    let input = data.split('\n').map(i => parseInt(i));
+    //console.log(data);
+    console.log(input[0]);
+    console.log(input[1]);
+    const ans = InversionCounter_1.InversionCounter.sortAndCount(input, comp);
+    console.log(ans);
+});
 const comp = {
     isLessThanOrEq: (a, b) => {
         return a <= b;
     }
 };
-const ans = InversionCounter_1.InversionCounter.sortAndCount([5, 7, 3, 8, 9, 5, 7, 3, 2, 4, 6, 8, 6, 4, 8, 1], comp);
-console.log(ans);
 //# sourceMappingURL=app.js.map

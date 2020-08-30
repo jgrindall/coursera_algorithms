@@ -1,10 +1,16 @@
 import {InversionCounter, Comparator} from "./InversionCounter";
+const fs = require('fs')
+fs.readFile('input.txt', 'utf8', function(err, data) {
+  if (err){
+      throw err;
+  }
+  let input = data.split('\n').map(i => parseInt(i));
+  const ans = InversionCounter.sortAndCount(input, comp);
+  console.log(ans);
+});
 
 const comp:Comparator<number> = {
     isLessThanOrEq:(a:number, b:number):boolean => {
         return a <= b;
     }
 };
-
-const ans = InversionCounter.sortAndCount([5,7,3,8,9,5,7,3,2,4,6,8,6,4,8,1], comp);
-console.log(ans);
