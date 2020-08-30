@@ -31,7 +31,6 @@ export class QuickSort{
       sort in place
     **/
     static sort(a:Array<number>, l:number, r:number):void{
-        // sort in place
         if(r - l === 0){
             // already sorted;
         }
@@ -42,8 +41,12 @@ export class QuickSort{
         }
         else{
             const pivotIndex:number = QuickSort.partition(a, l, r);
-            QuickSort.sort(a, l, pivotIndex - 1);
-            QuickSort.sort(a, pivotIndex + 1, r);
+            if(pivotIndex > l){
+                QuickSort.sort(a, l, pivotIndex - 1);
+            }
+            if(pivotIndex < r){
+                QuickSort.sort(a, pivotIndex + 1, r);
+            }
         }
     }
 }

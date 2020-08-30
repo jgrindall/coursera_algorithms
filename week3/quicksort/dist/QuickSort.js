@@ -32,7 +32,6 @@ class QuickSort {
       sort in place
     **/
     static sort(a, l, r) {
-        // sort in place
         if (r - l === 0) {
             // already sorted;
         }
@@ -43,8 +42,12 @@ class QuickSort {
         }
         else {
             const pivotIndex = QuickSort.partition(a, l, r);
-            QuickSort.sort(a, l, pivotIndex - 1);
-            QuickSort.sort(a, pivotIndex + 1, r);
+            if (pivotIndex > l) {
+                QuickSort.sort(a, l, pivotIndex - 1);
+            }
+            if (pivotIndex < r) {
+                QuickSort.sort(a, pivotIndex + 1, r);
+            }
         }
     }
 }

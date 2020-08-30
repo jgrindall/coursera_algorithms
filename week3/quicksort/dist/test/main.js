@@ -22,6 +22,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const chai = __importStar(require("chai"));
 const QuickSort_1 = require("../QuickSort");
 let expect = chai.expect;
+const swap = (a, i, j) => {
+    const t = a[i];
+    a[i] = a[j];
+    a[j] = t;
+};
 const selectionIsSorted = (a, l, r) => {
     for (let i = l; i <= r - 1; i++) {
         if (a[i] > a[i + 1]) {
@@ -39,9 +44,22 @@ const allLessThan = (a, val) => {
 const allGreaterThan = (a, val) => {
     return a.filter(x => x > val).length === a.length;
 };
+const getArray = (n) => {
+    const a = [];
+    for (let i = 0; i < n; i++) {
+        a.push(i);
+    }
+    for (let i = 0; i < 2 * n; i++) {
+        let i0 = Math.floor(Math.random() * n);
+        let j0 = Math.floor(Math.random() * n);
+        if (i0 !== j0) {
+            swap(a, i0, j0);
+        }
+    }
+    return a;
+};
 describe("description", () => {
     const checkPartition = (a) => {
-        console.log('a', a);
         let numLessThanFirst = 0;
         for (let i = 1; i < a.length; i++) {
             if (a[i] < a[0]) {
@@ -49,20 +67,23 @@ describe("description", () => {
             }
         }
         const p = QuickSort_1.QuickSort.partition(a, 0, a.length - 1);
-        console.log('a par', a);
-        console.log('p', p);
-        console.log('numLessThanFirst', numLessThanFirst);
         expect(p).to.equal(numLessThanFirst);
-        console.log('a0', a.slice(0, p));
-        console.log('a1', a.slice(p + 1));
         expect(allLessThan(a.slice(0, p), a[p])).to.equal(true);
         expect(allGreaterThan(a.slice(p + 1), a[p])).to.equal(true);
     };
     it("partitions", () => {
-        //checkPartition([9, 8, 2, 5, 1, 4, 7, 6]);
-        //checkPartition([3, 8, 2, 10, 1, 4, 7, 6]);
-        //checkPartition([8, 5, 2, 5, 1, 4, 9, 6]);
-        checkPartition([4, 8, 2, 6, 1, 9, 7, 11]);
+        for (let n = 4; n < 20; n++) {
+            checkPartition(getArray(n));
+        }
+    });
+    it("sorts", () => {
+        for (let n = 4; n < 200; n++) {
+            let a = getArray(n);
+            const len = a.length;
+            QuickSort_1.QuickSort.sort(a, 0, a.length - 1);
+            expect(len).to.equal(a.length);
+            expect(isSorted(a)).to.equal(true);
+        }
     });
 });
 //# sourceMappingURL=main.js.map
