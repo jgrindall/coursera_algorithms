@@ -1,6 +1,18 @@
 import * as chai from 'chai';
-import {MergeSort, Comparator} from "../MergeSort";
+import {InversionCounter, Comparator} from "../InversionCounter";
 let expect = chai.expect;
+
+const bruteForce = (a:Array<number>)=>{
+    let n = 0;
+    for(let i = 0; i < a.length - 1; i++){
+        for(let j = i + 1; j < a.length; j++){
+            if(a[i] > a[j]){
+                n++;
+            }
+        }
+    }
+    return n;
+};
 
 describe("description", () => {
 
@@ -10,24 +22,25 @@ describe("description", () => {
         }
     };
 
-    const check = a =>{
-        const ans = MergeSort.sort(a, comp);
-        expect(ans.length).to.equal(a.length);
+    const check = (a:Array<number>) => {
+        const ans = InversionCounter.sortAndCount(a, comp);
+        expect(ans.a.length).to.equal(a.length);
         if(a.length >= 2){
-            for(let i = 0; i < ans.length - 1; i++){
-                expect(ans[i] <= ans[i + 1]).to.equal(true);
+            for(let i = 0; i < ans.a.length - 1; i++){
+                expect(ans.a[i] <= ans.a[i + 1]).to.equal(true);
             }
         }
+        expect(ans.n).to.equal(bruteForce(a));
     };
 
     it("check empty", () =>{
-        const ans = MergeSort.sort([], comp);
-        expect(Array.isArray(ans)).to.equal(true);
-        expect(ans.length).to.equal(0);
+        const ans = InversionCounter.sortAndCount([], comp);
+        expect(Array.isArray(ans.a)).to.equal(true);
+        expect(ans.a.length).to.equal(0);
+        expect(ans.n).to.equal(0);
     });
 
     it("check basic", () =>{
-        check([]);
         check([1]);
         check([1, 1]);
         check([0, 1]);
@@ -44,8 +57,8 @@ describe("description", () => {
     it("check", () =>{
         check([1, 2, 3, 4, 5, 6]);
         check([6, 5, 4, 3, 2, 1]);
-        check([1, 1, 1, 5, 5, 5]);
-        check([5, 5, 5, 1, 1, 1]);
+        check([1, 4, 5, 2, 6, 3]);
+        check([2, 4, 5, 3, 4, 1]);
     });
 
     it("check large arrays", () =>{
@@ -60,5 +73,5 @@ describe("description", () => {
         }
         check(b);
     });
-
+    
 });

@@ -9,7 +9,7 @@ class MergeSort {
             if (i >= l.length || j >= r.length) {
                 break;
             }
-            else if (c.isLessThan(l[i], r[j])) {
+            else if (l[i] <= r[j]) {
                 out.push(l[i]);
                 i++;
             }

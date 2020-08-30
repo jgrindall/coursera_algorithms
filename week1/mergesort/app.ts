@@ -1,8 +1,8 @@
 import {MergeSort, Comparator} from "./MergeSort";
 
 const comp:Comparator<number> = {
-    isLessThan:(a:number, b:number):boolean => {
-        return a < b;
+    isLessThanOrEq:(a:number, b:number):boolean => {
+        return a <= b;
     }
 };
 
