@@ -1,21 +1,46 @@
 import * as chai from 'chai';
-import {ClosestPoints, Point} from "../ClosestPoints";
+import {ClosestPoints, Point, PointPair} from "../ClosestPoints";
 let expect = chai.expect;
 
-describe("description", () => {
+const eq = (p:Point, q:Point):boolean=>{
+    return p[0] === q[0] && p[1] === q[1];
+};
 
-    it("check", () =>{
-        const a:Array<Point> = [];
-        const num = 100;
-        for(let i = 0; i < num; i++){
-            const p:Point = [Math.random(), Math.random()];
-            a.push(p);
+const match = (pp0:PointPair, pp1:PointPair):boolean=>{
+    return (eq(pp0[0], pp1[0]) && eq(pp0[1], pp1[1])) || (eq(pp0[0], pp1[1]) && eq(pp0[1], pp1[0]));
+};
+
+describe("test", () => {
+
+    it("check basic", () =>{
+        const pt = ():Point=>{
+            return [Math.random()*5, Math.random()*5];
+        };
+        for (let i = 0; i < 20; i++){
+            const a:Array<Point> = [
+                pt(),
+                pt(),
+                pt(),
+                pt()
+            ];
+            const bruteForce = ClosestPoints.bruteForce(a);
+            const ans = ClosestPoints.getClosest(a);
+            expect(match(ans, bruteForce)).to.equal(true);
         }
-        const bruteForce = ClosestPoints.bruteForce(a);
-        const ans = ClosestPoints.getClosest(a);
-        expect(ans[0][0]).to.equal(bruteForce[0][0]);
-        expect(ans[0][1]).to.equal(bruteForce[0][1]);
-        expect(ans[1][0]).to.equal(bruteForce[1][0]);
-        expect(ans[1][1]).to.equal(bruteForce[1][0]);
+
     });
+
+    it("check random", () =>{
+        const num = 100;
+        for (let i = 0; i < 20; i++){
+            const a:Array<Point> = [];
+            for(let j = 0; j < num; j++){
+                a.push([Math.random(), Math.random()]);
+            }
+            const bruteForce = ClosestPoints.bruteForce(a);
+            const ans = ClosestPoints.getClosest(a);
+            expect(match(ans, bruteForce)).to.equal(true);
+        }
+    });
+
 });

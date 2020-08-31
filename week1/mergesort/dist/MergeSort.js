@@ -9,7 +9,7 @@ class MergeSort {
             if (i >= l.length || j >= r.length) {
                 break;
             }
-            else if (c.isLessThan(l[i], r[j])) {
+            else if (c(l[i], r[j])) {
                 out.push(l[i]);
                 i++;
             }
@@ -37,7 +37,7 @@ class MergeSort {
             return a;
         }
         else if (len === 2) {
-            return a[0] < a[1] ? a : [a[1], a[0]];
+            return c(a[0], a[1]) ? a : [a[1], a[0]];
         }
         else {
             const nLeft = Math.floor(len / 2);
