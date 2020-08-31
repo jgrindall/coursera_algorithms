@@ -1,6 +1,10 @@
 import * as chai from 'chai';
-import {QuickSort} from "../QuickSort";
+import {QuickSort, Comparator} from "../QuickSort";
 let expect = chai.expect;
+
+const comp:Comparator<number> = (a:number, b:number):boolean => {
+    return a <= b;
+};
 
 const swap = (a:Array<number>, i:number, j:number):void=>{
     const t = a[i];
@@ -53,7 +57,7 @@ describe("description", () => {
                 numLessThanFirst ++;
             }
         }
-        const p = QuickSort.partition(a, 0, a.length - 1);
+        const p = QuickSort.partition(a, comp, 0, a.length - 1);
         expect(p).to.equal(numLessThanFirst);
         expect(allLessThan(a.slice(0, p), a[p])).to.equal(true);
         expect(allGreaterThan(a.slice(p + 1), a[p])).to.equal(true);
@@ -69,7 +73,7 @@ describe("description", () => {
         for(let n = 4; n < 200; n++){
             const a = getArray(n);
             const len = a.length;
-            QuickSort.sort(a, 0, a.length - 1);
+            QuickSort.sort(a, comp, 0, a.length - 1);
             expect(len).to.equal(a.length);
             expect(isSorted(a)).to.equal(true);
         }

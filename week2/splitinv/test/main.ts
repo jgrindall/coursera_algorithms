@@ -16,10 +16,8 @@ const bruteForce = (a:Array<number>)=>{
 
 describe("description", () => {
 
-    const comp:Comparator<number> = {
-        isLessThanOrEq:(a:number, b:number):boolean => {
-            return a <= b;
-        }
+    const comp:Comparator<number> = (a:number, b:number):boolean => {
+        return a <= b;
     };
 
     const check = (a:Array<number>) => {
@@ -73,5 +71,5 @@ describe("description", () => {
         }
         check(b);
     });
-    
+
 });

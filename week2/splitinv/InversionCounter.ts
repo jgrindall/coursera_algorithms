@@ -1,6 +1,4 @@
-export interface Comparator<T>{
-    isLessThanOrEq(a:T, b:T):boolean;
-}
+export type Comparator<T> = (a:T, b:T) => boolean;
 
 type ArrayAndCount<T> = {
     a:Array<T>;
@@ -16,7 +14,7 @@ export class InversionCounter{
             if(i >= l.a.length || j >= r.a.length){
                 break;
             }
-            else if(c.isLessThanOrEq(l.a[i], r.a[j])){
+            else if(c(l.a[i], r.a[j])){
                 out.push(l.a[i]);
                 i++;
             }
@@ -48,7 +46,7 @@ export class InversionCounter{
             };
         }
         else if(len === 2){
-            return c.isLessThanOrEq(a[0], a[1]) ? {a:[a[0], a[1]], n:0} : {a:[a[1], a[0]], n:1};
+            return c(a[0], a[1]) ? {a:[a[0], a[1]], n:0} : {a:[a[1], a[0]], n:1};
         }
         else{
             const nLeft = Math.floor(len/2);

@@ -22,6 +22,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const chai = __importStar(require("chai"));
 const QuickSort_1 = require("../QuickSort");
 let expect = chai.expect;
+const comp = (a, b) => {
+    return a <= b;
+};
 const swap = (a, i, j) => {
     const t = a[i];
     a[i] = a[j];
@@ -66,7 +69,7 @@ describe("description", () => {
                 numLessThanFirst++;
             }
         }
-        const p = QuickSort_1.QuickSort.partition(a, 0, a.length - 1);
+        const p = QuickSort_1.QuickSort.partition(a, comp, 0, a.length - 1);
         expect(p).to.equal(numLessThanFirst);
         expect(allLessThan(a.slice(0, p), a[p])).to.equal(true);
         expect(allGreaterThan(a.slice(p + 1), a[p])).to.equal(true);
@@ -78,9 +81,9 @@ describe("description", () => {
     });
     it("sorts", () => {
         for (let n = 4; n < 200; n++) {
-            let a = getArray(n);
+            const a = getArray(n);
             const len = a.length;
-            QuickSort_1.QuickSort.sort(a, 0, a.length - 1);
+            QuickSort_1.QuickSort.sort(a, comp, 0, a.length - 1);
             expect(len).to.equal(a.length);
             expect(isSorted(a)).to.equal(true);
         }

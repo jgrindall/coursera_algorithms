@@ -10,13 +10,13 @@ class QuickSort {
     /**
       partition in place
     **/
-    static partition(a, l, r) {
+    static partition(a, c, l, r) {
         const pivot = a[l];
         let i = l + 1;
         let j = l + 1;
         while (j < r + 1) {
             const inspect = a[j];
-            if (inspect > pivot) {
+            if (!c(inspect, pivot)) {
                 j++;
             }
             else {
@@ -31,22 +31,22 @@ class QuickSort {
     /**
       sort in place
     **/
-    static sort(a, l, r) {
+    static sort(a, c, l, r) {
         if (r - l === 0) {
             // already sorted;
         }
         else if (r - l === 1) {
-            if (a[l] > a[r]) {
+            if (!c(a[l], a[r])) {
                 swap(a, l, r);
             }
         }
         else {
-            const pivotIndex = QuickSort.partition(a, l, r);
+            const pivotIndex = QuickSort.partition(a, c, l, r);
             if (pivotIndex > l) {
-                QuickSort.sort(a, l, pivotIndex - 1);
+                QuickSort.sort(a, c, l, pivotIndex - 1);
             }
             if (pivotIndex < r) {
-                QuickSort.sort(a, pivotIndex + 1, r);
+                QuickSort.sort(a, c, pivotIndex + 1, r);
             }
         }
     }

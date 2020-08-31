@@ -1,6 +1,4 @@
-export interface Comparator<T>{
-    isLessThanOrEq(a:T, b:T):boolean;
-}
+export type Comparator<T> = (a:T, b:T) => boolean;
 
 export class MergeSort{
     static merge<T>(l:Array<T>, r:Array<T>, c:Comparator<T>):Array<T>{
@@ -10,7 +8,7 @@ export class MergeSort{
             if(i >= l.length || j >= r.length){
                 break;
             }
-            else if(c.isLessThanOrEq(l[i], r[j])){
+            else if(c(l[i], r[j])){
                 out.push(l[i]);
                 i++;
             }
@@ -38,7 +36,7 @@ export class MergeSort{
             return a;
         }
         else if(len === 2){
-            return c.isLessThanOrEq(a[0], a[1]) ? a : [a[1], a[0]];
+            return c(a[0], a[1]) ? a : [a[1], a[0]];
         }
         else{
             const nLeft = Math.floor(len/2);

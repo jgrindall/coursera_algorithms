@@ -4,10 +4,8 @@ let expect = chai.expect;
 
 describe("description", () => {
 
-    const comp:Comparator<number> = {
-        isLessThanOrEq:(a:number, b:number):boolean => {
-            return a <= b;
-        }
+    const comp:Comparator<number> = (a:number, b:number):boolean => {
+        return a <= b;
     };
 
     const check = a =>{
