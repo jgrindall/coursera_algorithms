@@ -27,6 +27,12 @@ fs.readFile('input.txt', 'utf8', (err:any, data:string) => {
 
 
 /**
+
+162085
+164123
+138382
+
+
 Your task is to compute the total number of comparisons used to sort
 the given input file by QuickSort. As you know, the number of
 comparisons depends on which elements are chosen as pivots, so we'll ask
