@@ -67,11 +67,9 @@ export class NumericMedianPivot implements PivotCalc<number>{
 export class RSelect<T>{
 
     private pivotCalc: PivotCalc<T>;
-    private arr: Array<T>;
     private comparator:Comparator<T>;
 
-    constructor(arr: Array<T>, comparator:Comparator<T>){
-        this.arr = arr;
+    constructor(comparator:Comparator<T>){
         this.pivotCalc = new LeftPivot<T>();
         this.comparator = comparator;
     }
@@ -83,47 +81,50 @@ export class RSelect<T>{
     /**
       partition in place
     **/
-     partition(l:number, r:number):number{
-        const pivotIndex:number = this.pivotCalc.getPivotIndex(l, r, this.arr); // get the pivot and move it to the first place
-        swap(this.arr, l, pivotIndex);
-        const pivot = this.arr[l];
-        let i = l + 1;
-        let j = l + 1;
-        while(j < r + 1){
-            const inspect:T = this.arr[j];
-            if(!this.comparator(inspect, pivot)){
-                j++;
-            }
-            else{
-                swap(this.arr, i, j);
-                i++;
-                j++;
-            }
-        }
-        swap(this.arr, l, i - 1);
-        return i - 1;
+     partition(arr:Array<T>):number{
+         const l = 0, r = arr.length - 1;
+         const pivotIndex:number = this.pivotCalc.getPivotIndex(l, r, arr); // get the pivot and move it to the first place
+         swap(arr, l, pivotIndex);
+         const pivot = arr[l];
+         let i = l + 1;
+         let j = l + 1;
+         while(j < r + 1){
+             const inspect:T = arr[j];
+             if(!this.comparator(inspect, pivot)){
+                 j++;
+             }
+             else{
+                 swap(arr, i, j);
+                 i++;
+                 j++;
+             }
+         }
+         swap(arr, l, i - 1);
+         return i - 1;
     }
 
     /**
       sort in place
     **/
-    getOrderStat(i:number, l:number, r:number):T{
-        const len = r - l + 1;
+    getOrderStat(arr:Array<T>, i:number):T{
+        const len = arr.length;
+        //console.log('in ', arr, 'find order stat', i);
         if(i < 0 || i > len - 1){
-            throw new Error("cannot find ith in l->r" +  i + "," + l + "," + r);
+            throw new Error("cannot find ith in len" +  i + "," + len);
         }
         if(len === 1){
-            return this.arr[0];
+            return arr[0];
         }
-        const pivotIndex:number = this.partition(l, r);
+        const pivotIndex:number = this.partition(arr);
+        //console.log("pivotIndex", pivotIndex, 'a is now', arr);
         if(pivotIndex === i){
-            return this.arr[i];
+            return arr[i];
         }
         else if(pivotIndex < i){
-            return this.getOrderStat(i - pivotIndex, pivotIndex + 1, r);
+            return this.getOrderStat(arr.slice(pivotIndex + 1), i - pivotIndex - 1);
         }
         else{
-            return this.getOrderStat(i, l, pivotIndex - 1);
+            return this.getOrderStat(arr.slice(0, pivotIndex), i);
         }
     }
 }

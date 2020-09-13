@@ -16,10 +16,16 @@ describe("description", () => {
 
     const findOrderStatWithPivot = (n:number, i:number, pivotCalc:PivotCalc<number>)=>{
         const a = getArray(n);
-        const rs = new RSelect<number>(a, comp);
+        const rs = new RSelect<number>(comp);
         rs.setPivotCalc(pivotCalc);
-        expect(rs.getOrderStat(i, 0, n - 1)).to.equal(i);
+        expect(rs.getOrderStat(a, i)).to.equal(i);
     };
+
+    it("works", () =>{
+        const a = [6, 4, 3, 1, 5, 2, 0];
+        const rs = new RSelect<number>(comp);
+        expect(rs.getOrderStat(a, 5)).to.equal(5);
+    });
 
     it("works", () =>{
         for(let n = 4; n < 200; n++){
