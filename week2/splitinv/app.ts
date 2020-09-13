@@ -1,5 +1,5 @@
 import {InversionCounter, Comparator} from "./InversionCounter";
-const fs = require('fs');
+import fs from 'fs';
 
 const comp:Comparator<number> = (a:number, b:number):boolean => {
     return a <= b;

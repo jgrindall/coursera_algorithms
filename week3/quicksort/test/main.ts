@@ -1,5 +1,5 @@
 import * as chai from 'chai';
-import {QuickSort, Comparator} from "../QuickSort";
+import {QuickSort, Comparator, median, LeftPivot, RightPivot, NumericMedianPivot, RandomPivot} from "../QuickSort";
 let expect = chai.expect;
 
 const comp:Comparator<number> = (a:number, b:number):boolean => {
@@ -50,6 +50,20 @@ const getArray = (n:number)=>{
 
 describe("description", () => {
 
+    it("check median", () =>{
+        expect(median(0,5,7)).to.equal(5);
+        expect(median(0,0,7)).to.equal(0);
+        expect(median(0,2,2)).to.equal(2);
+        expect(median(8,7,6)).to.equal(7);
+        expect(median(7,6,8)).to.equal(7);
+        expect(median(4,4,4)).to.equal(4);
+        expect(median(6,4,6)).to.equal(6);
+        expect(median(7,9,7)).to.equal(7);
+        expect(median(1,1,-1)).to.equal(1);
+        expect(median(0,10,6)).to.equal(6);
+        expect(median(7,-2,7)).to.equal(7);
+    });
+
     const checkPartition = (a:Array<number>)=>{
         let numLessThanFirst = 0;
         for(let i = 1; i < a.length; i++){
@@ -57,7 +71,8 @@ describe("description", () => {
                 numLessThanFirst ++;
             }
         }
-        const p = QuickSort.partition(a, comp, 0, a.length - 1);
+        const qs = new QuickSort<number>(a, comp);
+        const p = qs.partition(0, a.length - 1);
         expect(p).to.equal(numLessThanFirst);
         expect(allLessThan(a.slice(0, p), a[p])).to.equal(true);
         expect(allGreaterThan(a.slice(p + 1), a[p])).to.equal(true);
@@ -73,7 +88,56 @@ describe("description", () => {
         for(let n = 4; n < 200; n++){
             const a = getArray(n);
             const len = a.length;
-            QuickSort.sort(a, comp, 0, a.length - 1);
+            const qs = new QuickSort<number>(a, comp);
+            qs.sort(0, a.length - 1);
+            expect(len).to.equal(a.length);
+            expect(isSorted(a)).to.equal(true);
+        }
+    });
+
+    it("sorts using left pivot", () =>{
+        for(let n = 4; n < 200; n++){
+            const a = getArray(n);
+            const len = a.length;
+            const qs = new QuickSort<number>(a, comp);
+            qs.setPivotCalc(new LeftPivot<number>());
+            qs.sort(0, a.length - 1);
+            expect(len).to.equal(a.length);
+            expect(isSorted(a)).to.equal(true);
+        }
+    });
+
+    it("sorts using right pivot", () =>{
+        for(let n = 4; n < 5; n++){
+            const a = getArray(n);
+            const len = a.length;
+            const qs = new QuickSort<number>(a, comp);
+            qs.setPivotCalc(new RightPivot<number>());
+            qs.sort(0, a.length - 1);
+            expect(len).to.equal(a.length);
+            expect(isSorted(a)).to.equal(true);
+        }
+    });
+
+    it("sorts using random pivot", () =>{
+        for(let n = 4; n < 200; n++){
+            const a = getArray(n);
+            const len = a.length;
+            const qs = new QuickSort<number>(a, comp);
+            qs.setPivotCalc(new RandomPivot<number>());
+            qs.sort(0, a.length - 1);
+            expect(len).to.equal(a.length);
+            expect(isSorted(a)).to.equal(true);
+        }
+    });
+
+    it("sorts using median of three pivot", () =>{
+        for(let n = 4; n < 200; n++){
+            const a = getArray(n);
+            const len = a.length;
+            const qs = new QuickSort<number>(a, comp);
+            qs.setPivotCalc(new NumericMedianPivot());
+            qs.sort(0, a.length - 1);
             expect(len).to.equal(a.length);
             expect(isSorted(a)).to.equal(true);
         }
