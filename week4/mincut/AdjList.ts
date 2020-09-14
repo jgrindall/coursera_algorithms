@@ -1,4 +1,4 @@
-type Edge = [string, string];
+export type Edge = [string, string];
 
 export type Hash = {
     [key: string]: Array<string>
@@ -8,10 +8,8 @@ export class AdjList{
 
     private hash:Hash;
 
-    constructor(){
-        this.hash = {
-
-        };
+    constructor(hash?:Hash){
+        this.hash = hash || {};
     }
     getNodeName(n0:string, n1:string){
         const nodes0 = n0.split(','), nodes1 = n1.split(',');
@@ -38,6 +36,9 @@ export class AdjList{
             });
         });
         return edges;
+    }
+    clone():AdjList{
+        return new AdjList(JSON.parse(JSON.stringify(this.getHash())));
     }
     contract(e0:string, e1:string):AdjList{
         const newGraph = new AdjList();
