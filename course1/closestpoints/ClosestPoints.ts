@@ -1,4 +1,4 @@
-import {MergeSort, Comparator} from "../../week1/mergesort/MergeSort";
+import {MergeSort, Comparator} from "../mergesort/MergeSort";
 
 export type Point = [number, number];
 

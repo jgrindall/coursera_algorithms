@@ -18,12 +18,17 @@ export class MinCut{
         const n = Object.keys(this.graph.getHash()).length;
         // make n^2 ln n checks
         const numChecks = Math.ceil(n*n*Math.log(n));
+        console.log("doing", numChecks);
         let minCut:Cut = null, minCount = Infinity;
         for(let i = 1; i <= numChecks; i++){
+            if(i % 100 === 0){
+                console.log('#' + (100*i/numChecks) + "%");
+            }
             const cut:Cut = this.getCut();
             if(cut.count < minCount){
                 minCut = cut;
                 minCount = cut.count;
+                console.log(i, "found", minCount);
             }
         }
         return minCut;
@@ -33,9 +38,9 @@ export class MinCut{
         // choose an edge at random
         let g = this.graph.clone();
         while(g.getAllEdges().length >= 3){
-            const edge:Edge = _.sample(g.getAllEdges());
-            g = g.contract(edge[0], edge[1]);
-        }
+            const edge:Edge = g.getRandomEdge();
+             g = g.contract(edge[0], edge[1]);
+         }
         const hash:Hash = g.getHash();
         const keys:Array<string> = Object.keys(hash);
         const nodesA = keys[0].split(',');

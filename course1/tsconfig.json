@@ -12,5 +12,6 @@
         "noImplicitAny": false,
         "esModuleInterop": true,
         "experimentalDecorators": true
-    }
+    },
+    "exclude": ["run.js", "test.js", "dist/**", "node_modules/**"]
 }
