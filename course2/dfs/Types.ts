@@ -1,6 +1,11 @@
+export enum ExploredType{
+    UNEXPLORED = 0,
+    EXPLORED = 1,
+    EXPLORING = 2
+};
 
 export type ProgressItem = {
-    explored:boolean,
+    explored:ExploredType,
     dist?:number,
     label?:number
 };

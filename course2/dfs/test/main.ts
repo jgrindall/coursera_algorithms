@@ -1,9 +1,10 @@
 import * as chai from 'chai';
 import {Hash, AdjList} from "../AdjList";
 import * as _ from "lodash";
-import {Dfs, Component} from "../Dfs";
+import {Dfs} from "../Dfs";
+import {Component, Progress} from "../Types";
 
-let expect = chai.expect;
+let expect = chai.expect, assert = chai.assert;
 
 const _eq = (a:Array<string>, b:Array<string>):boolean=>{
     if(a.length !== b.length){
@@ -61,6 +62,25 @@ describe("description", () => {
         expect(_eq(comps[0], ['1', '3', '5', '7', '9'])).to.equal(true);
         expect(_eq(comps[1], ['2', '4'])).to.equal(true);
         expect(_eq(comps[2], ['6', '8', '10'])).to.equal(true);
+    });
+
+    it("detects acyclicity", () =>{
+        const hash:Hash = {
+            '1':[
+                '2',
+            ],
+            '2':[
+                '3'
+            ],
+            '3':[
+                '1'
+            ]
+        }
+        const g:AdjList = new AdjList(hash);
+        const throws = ()=>{
+            const progress:Progress = new Dfs(g).getTopologicalOrder();
+        };
+        assert.throws(throws, Error, "Found a cycle");
     });
 
 });

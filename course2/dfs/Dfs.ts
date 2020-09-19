@@ -1,7 +1,7 @@
 import { AdjList, Edge, Hash } from "./AdjList";
 import * as _ from "lodash";
 import {Stack} from "./Stack";
-import {ProgressItem, Component, Progress} from "./Types";
+import {Component, Progress, ExploredType} from "./Types";
 
 export class Dfs{
     private graph:AdjList;
@@ -10,12 +10,14 @@ export class Dfs{
         this.graph = graph;
     }
 
-    static isAcyclic(g:AdjList):boolean{
-        //Use integer array to tag current status of node: i.e. 0 --means this
-        //node hasn't been visited before. -1 -- means this node has been visited, and its
-        //children nodes are being visited. 1 -- means this node has been visited, and it'
-        //done. So if a node's status is -1 while doing DFS, it means there must be a cycle existed.
-
+    isAcyclic():boolean{
+        try{
+            this.getTopologicalOrder();
+            return true;
+        }
+        catch(e){
+            return false;
+        }
     }
 
     getTopologicalOrder():Progress{
@@ -23,20 +25,27 @@ export class Dfs{
         const progress:Progress = {};
         nodes.forEach((node:string)=>{
             progress[node] = {
-                explored: false
+                explored: ExploredType.UNEXPLORED
             };
         });
         let currentLabel = nodes.length;
         nodes.forEach(node=>{
-            if(!progress[node].explored){
+            if(progress[node].explored !== ExploredType.EXPLORED){
+                if(progress[node].explored === ExploredType.EXPLORING){
+                    throw new Error("Found a cycle");
+                }
+                progress[node].explored = ExploredType.EXPLORING;
                 const stack = new Stack<string>();
                 stack.push(node);
                 while(!stack.isEmpty()){
                     const node = stack.pop();
                     const neighbours = this.graph.getNeighbours(node);
-                    const unexploredNeighbours:Array<string> = neighbours.filter(neighbour => !progress[neighbour].explored);
+                    const unexploredNeighbours:Array<string> = neighbours.filter(neighbour => progress[neighbour].explored !== ExploredType.EXPLORED);
                     unexploredNeighbours.forEach((unexplored:string)=>{
-                        progress[unexplored].explored = true;
+                        if(progress[unexplored].explored === ExploredType.EXPLORING){
+                            throw new Error("Found a cycle");
+                        }
+                        progress[unexplored].explored = ExploredType.EXPLORED;
                         stack.push(unexplored);
                     });
                 }
@@ -53,25 +62,26 @@ export class Dfs{
         const components:Array<Component> = [];
         nodes.forEach((node:string)=>{
             progress[node] = {
-                explored: false
+                explored: ExploredType.UNEXPLORED
             };
         });
         nodes.forEach(node=>{
-            if(!progress[node].explored){
-                // get the component
-                const newComponent:Component = [];
+            if(progress[node].explored === ExploredType.UNEXPLORED){
+                progress[node].explored = ExploredType.EXPLORED;
+                const newComponent:Component = [node];
                 const stack = new Stack<string>();
                 stack.push(node);
                 while(!stack.isEmpty()){
                     const node = stack.pop();
                     const neighbours = this.graph.getNeighbours(node);
-                    const unexploredNeighbours:Array<string> = neighbours.filter(neighbour => !progress[neighbour].explored);
+                    const unexploredNeighbours:Array<string> = neighbours.filter(neighbour => progress[neighbour].explored === ExploredType.UNEXPLORED);
                     unexploredNeighbours.forEach((unexplored:string)=>{
                         newComponent.push(unexplored);
-                        progress[unexplored].explored = true;
+                        progress[unexplored].explored = ExploredType.EXPLORED;
                         stack.push(unexplored);
                     });
                 }
+                progress[node].explored = ExploredType.EXPLORED;
                 components.push(newComponent);
             }
         });
