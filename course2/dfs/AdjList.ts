@@ -18,9 +18,6 @@ export class AdjList{
             this.m += this.hash[node].length;
         });
     }
-    getNodes(){
-        return Object.keys(this.hash);
-    }
     setHash(hash:Hash):void{
         this.hash = hash;
     }
@@ -35,9 +32,6 @@ export class AdjList{
     }
     getNumEdges():number{
         return this.m;
-    }
-    getNeighbours(a:string):Array<string>{
-        return this.hash[a];
     }
     getAllEdges():Array<Edge>{
         const edges = [];
