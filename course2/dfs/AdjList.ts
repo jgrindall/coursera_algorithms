@@ -9,14 +9,9 @@ export type Hash = {
 export class AdjList{
 
     private hash:Hash;
-    private m:number;
 
     constructor(hash?:Hash){
         this.hash = hash || {};
-        this.m = 0;
-        Object.keys(this.hash).forEach(node=>{
-            this.m += this.hash[node].length;
-        });
     }
     getNodes(){
         return Object.keys(this.hash);
@@ -30,11 +25,14 @@ export class AdjList{
         }
         this.hash[a] = [];
     }
+    getDegree(node:string){
+        return this.hash[node].length;
+    }
+    hasEdge(node0:string, node1:string):boolean{
+        return this.hash[node0] && this.hash[node0].includes(node1);
+    }
     getHash():Hash{
         return this.hash;
-    }
-    getNumEdges():number{
-        return this.m;
     }
     getNeighbours(a:string):Array<string>{
         return this.hash[a];
@@ -53,9 +51,8 @@ export class AdjList{
         return new AdjList(JSON.parse(JSON.stringify(this.getHash())));
     }
     addEdge(node0:string, node1:string):void{
-        if(!this.hash[node0].includes(node1)){
+        if(!this.hasEdge(node0, node1)){
             this.hash[node0].push(node1);
-            this.m++;
         }
     }
 }

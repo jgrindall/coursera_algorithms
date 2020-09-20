@@ -28,31 +28,24 @@ export class Dfs{
                 explored: ExploredType.UNEXPLORED
             };
         });
-        let currentLabel = nodes.length;
-        nodes.forEach(node=>{
-            if(progress[node].explored !== ExploredType.EXPLORED){
-                if(progress[node].explored === ExploredType.EXPLORING){
-                    throw new Error("Found a cycle");
-                }
+        let currentLabel:number = nodes.length;
+        const visit = (node:string)=>{
+            if(progress[node].explored === ExploredType.EXPLORED){
+                return;
+            }
+            else if(progress[node].explored === ExploredType.EXPLORING){
+                throw new Error("Found a cycle");
+            }
+            else{
                 progress[node].explored = ExploredType.EXPLORING;
-                const stack = new Stack<string>();
-                stack.push(node);
-                while(!stack.isEmpty()){
-                    const node = stack.pop();
-                    const neighbours = this.graph.getNeighbours(node);
-                    const unexploredNeighbours:Array<string> = neighbours.filter(neighbour => progress[neighbour].explored !== ExploredType.EXPLORED);
-                    unexploredNeighbours.forEach((unexplored:string)=>{
-                        if(progress[unexplored].explored === ExploredType.EXPLORING){
-                            throw new Error("Found a cycle");
-                        }
-                        progress[unexplored].explored = ExploredType.EXPLORED;
-                        stack.push(unexplored);
-                    });
-                }
+                const neighbours = this.graph.getNeighbours(node);
+                neighbours.forEach(visit);
+                progress[node].explored = ExploredType.EXPLORED;
                 progress[node].label = currentLabel;
                 currentLabel--;
             }
-        });
+        };
+        nodes.forEach(visit);
         return progress;
     }
 

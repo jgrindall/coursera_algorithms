@@ -84,6 +84,7 @@ describe("description", () => {
     });
 
     it("finds dist components", () =>{
+        // from the lecture
         const hash:Hash = {
             '1':[
                 '3',

@@ -9,16 +9,9 @@ export type Hash = {
 export class AdjList{
 
     private hash:Hash;
-    private n:number;
-    private m:number;
 
     constructor(hash?:Hash){
         this.hash = hash || {};
-        this.n = Object.keys(this.hash).length;
-        this.m = 0;
-        Object.keys(this.hash).forEach(node=>{
-            this.m += this.hash[node].length;
-        });
     }
     getNodeName(n0:string, n1:string){
         const nodes0 = n0.split(','), nodes1 = n1.split(',');
@@ -42,9 +35,6 @@ export class AdjList{
             node,
             _.sample(this.hash[node])
         ];
-    }
-    getNumEdges():number{
-        return this.m;
     }
     getAllEdges():Array<Edge>{
         const edges = [];
@@ -90,7 +80,6 @@ export class AdjList{
     addEdge(node0:string, node1:string):void{
         if(!this.hash[node0].includes(node1)){
             this.hash[node0].push(node1);
-            this.m++;
         }
     }
 }
