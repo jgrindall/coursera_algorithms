@@ -96,7 +96,7 @@ const checkDistComponents = ()=>{
         compData.push(row);
     }
     const g:AdjList = makeComponents(compData);
-    const comps:Array<Component> = new Dfs(g).getConnectedComponents();
+    const comps:Array<Component> = new Dfs(g).getConnectedComponentsUndir();
     expect(comps.length).to.equal(compData.length);
     for(let i = 0; i < compData.length; i++){
         expect(_eq(comps[i], compData[i])).to.equal(true);
@@ -131,7 +131,7 @@ describe("description", () => {
 
     it("finds dist components", () =>{
         const g:AdjList = new AdjList(lecture);
-        const comps:Array<Component> = new Dfs(g).getConnectedComponents();
+        const comps:Array<Component> = new Dfs(g).getConnectedComponentsUndir();
         expect(comps.length).to.equal(3);
         expect(_eq(comps[0], ['1', '3', '5', '7', '9'])).to.equal(true);
         expect(_eq(comps[1], ['2', '4'])).to.equal(true);
