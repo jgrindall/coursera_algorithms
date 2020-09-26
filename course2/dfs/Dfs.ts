@@ -49,7 +49,7 @@ export class Dfs{
         return progress;
     }
 
-    getConnectedComponents():Array<Component>{
+    getConnectedComponentsUndir():Array<Component>{
         const progress:Progress = {};
         const nodes = this.graph.getNodes();
         const components:Array<Component> = [];
@@ -79,6 +79,14 @@ export class Dfs{
             }
         });
         return components;
+    }
+
+    getTopologicalOrderStack():Progress{
+        return {};
+    }
+
+    getConnectedComponentsUndirStack():Array<Component>{
+        return [];
     }
 
 }
