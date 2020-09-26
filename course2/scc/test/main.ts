@@ -49,27 +49,27 @@ const equivalent = (g:AdjList, a:string, b:string):boolean =>{
     return fromA.includes(b) && fromB.includes(a);
 };
 
-const getAllEquiv = (g:AdjList, a:string):Array<string>=>{
+const getAllEquivalentNodes = (g:AdjList, a:string):Array<string>=>{
     return g.getNodes().filter(node=>{
         return equivalent(g, a, node);
     });
 };
 
+// is 'comp' a Scc component of g?
 const isScc  = (g:AdjList, comp:Component):boolean=>{
     const nodes = g.getNodes();
     for(let i = 0; i < nodes.length; i++){
         const node = nodes[i];
         // either i) node is in comp and is equiv to everything in comp and nothing else
-        //or
-        // ii) node is not in comp and is not equiv to anything in comp
-        const allEquiv = getAllEquiv(g, node);
+        const allEquivNodes = getAllEquivalentNodes(g, node);
         if(comp.includes(node)){
-            if(!_eq(allEquiv, comp)){
+            if(!_eq(allEquivNodes, comp)){
                 return false;
             }
         }
         else{
-            if(_.intersection(allEquiv, comp).length >= 1){
+            //or ii) node is not in comp and is not equiv to anything in comp
+            if(_.intersection(allEquivNodes, comp).length >= 1){
                 return false;
             }
         }
@@ -77,6 +77,7 @@ const isScc  = (g:AdjList, comp:Component):boolean=>{
     return true;
 };
 
+// validate the answer
 const validateScc = (g:AdjList, comps:Components):boolean=>{
     const roots:Array<string> = Object.keys(comps);
     for(let i:number = 0; i < roots.length; i++){
@@ -156,8 +157,6 @@ const getSmallGraph = ():Hash=>{
         '2': []
     };
 };
-
-
 
 describe("description", () => {
 
@@ -299,43 +298,43 @@ describe("description", () => {
         expect(validateScc(g, comps)).to.equal(true);
     };
 
+    const graphSizeLarge = 150;
+    const graphSize:number = 10;
+    const numTests:number = 5;
+
     it("gets scc - large", () =>{
-        checkRandom(500);
-    }).timeout(10000);
+        checkRandom(graphSizeLarge);
+    }).timeout(60000);
 
     it("gets scc - large sparse", () =>{
-        checkRandom(500, 0.1);
-    }).timeout(10000);
+        checkRandom(graphSizeLarge, 0.1);
+    }).timeout(60000);
 
     it("gets scc - large dense", () =>{
-        checkRandom(500, 0.9);
-    }).timeout(10000);
+        checkRandom(graphSizeLarge, 0.9);
+    }).timeout(60000);
 
     it("gets scc - random", () =>{
-        const n = 50;
-        for(let _t:number = 0; _t < 50; _t++){
-            checkRandom(n);
+        for(let _t:number = 0; _t < numTests; _t++){
+            checkRandom(graphSize);
         }
-    }).timeout(10000);
+    }).timeout(60000);
 
     it("gets scc - sparse", () =>{
-        const n = 50;
-        for(let _t:number = 0; _t < 50; _t++){
-            checkRandom(n, 0.1);
+        for(let _t:number = 0; _t < numTests; _t++){
+            checkRandom(graphSize, 0.1);
         }
-    }).timeout(10000);
+    }).timeout(60000);
 
     it("gets scc - dense", () =>{
-        const n = 20;
-        for(let _t:number = 0; _t < 50; _t++){
-            checkRandom(n, 0.9);
+        for(let _t:number = 0; _t < numTests; _t++){
+            checkRandom(graphSize, 0.9);
         }
     }).timeout(10000);
 
     it("gets scc - random", () =>{
-        const n = 50;
-        for(let _t:number = 0; _t < 50; _t++){
-            checkRandom(n, Math.random());
+        for(let _t:number = 0; _t < numTests; _t++){
+            checkRandom(graphSize, Math.random());
         }
     }).timeout(10000);
 
