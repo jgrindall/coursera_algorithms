@@ -40,7 +40,6 @@ fs.readFile('./scc/scc.txt', 'utf8', (err:any, data:string) => {
     }
 
     console.log(isolatedNodes.length, 'isolatedNodes');
-    console.log(isolatedNodes.slice(0, 10));
 
     console.log(g.getNodes().length, "nodes");
     console.log('finding scc...');
@@ -48,13 +47,10 @@ fs.readFile('./scc/scc.txt', 'utf8', (err:any, data:string) => {
     const sources = Object.keys(scc);
     const lengths:Array<number> = [];
     sources.forEach(source=>{
-        const len = scc[source].length;
-        //console.log('source', source, '#', len);
-        lengths.push(len);
+        lengths.push(scc[source].length);
     });
 
-
-    lengths.sort().reverse();
+    lengths.sort( (a:number, b:number)=> a - b).reverse();
 
     console.log(lengths.slice(0, 10));
 
