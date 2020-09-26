@@ -33,15 +33,22 @@ export class Dijkstra{
                     }
                 });
             });
+            if(minLength === Infinity){
+                return false;
+            }
             processed.push(vw[1]);
             const pathItem:PathItem = paths[vw[0]];
             paths[vw[1]] = {
                 length:minLength,
                 route:[...pathItem.route, vw[1]]
             };
+            return true;
         };
-        while(processed.length < nodes.length){
-            enlarge();
+        while(true){
+            const success = enlarge();
+            if(!success){
+                break;
+            }
         }
         return paths;
     }
