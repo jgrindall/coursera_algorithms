@@ -77,6 +77,13 @@ export class Heap{
         return this._vals;
     }
 
+    _heapProperty(index:number):boolean{
+        const val:number = this._vals[index];
+        const children:Array<number> = this.getChildren(index);
+        const incorrectChildren:Array<number> = children.filter((child:number) => val > child);
+        return incorrectChildren.length === 0;
+    }
+
     insert(val:number){
         // put in the next slot
         const currentLength = this._vals.length;
@@ -104,14 +111,33 @@ export class Heap{
         const root:number = this._vals[0];
         const last = this._vals[this._vals.length - 1];
         this._vals[0] = last;
-        // bubble down
-        let i = 0;
-        const children = this._getChildIndices(i).map(i=>this._vals[i]);
-        if(children[0] < children[1]){
-            // left
-            this._swapElementsAt(i, 2*i);
+        this._vals.pop();
+        if(this._vals.length === 0){
+            return root;
         }
-        return root;
+        else{
+            // bubble down
+            let index = 0;
+            while(!this._heapProperty(index)){
+                const children:Array<number> = this.getChildren(index);
+                if(children.length === 0){
+                    throw new Error("heap property failed");
+                }
+                else{
+                    let childIndex:number;
+                    if(children.length === 1 || (children.length === 2 && children[0] < children[1])){
+                        // left child
+                        childIndex = this._getChildIndices(index)[0];
+                    }
+                    else{
+                        // right child
+                        childIndex = this._getChildIndices(index)[1];
+                    }
+                    this._swapElementsAt(index, childIndex);
+                    index = childIndex;
+                }
+            }
+            return root;
+        }
     }
-
 }

@@ -4,6 +4,18 @@ import * as _ from "lodash";
 
 let expect = chai.expect;
 
+const _eq = (a:Array<number>, b:Array<number>):boolean=>{
+    if(a.length !== b.length){
+        return false;
+    }
+    for(let i = 0; i < a.length; i++){
+        if(a[i] !== b[i]){
+            return false;
+        }
+    }
+    return true;
+}
+
 const checkHeap = (h:Heap):boolean=>{
     const vals = h.getVals();
     for(let i = 0; i < vals.length; i++){
@@ -44,6 +56,27 @@ describe("description", () => {
         getAllLists(_.range(n), n).forEach(testSimple);
     };
 
+    const testAllMin = (n:number)=>{
+        getAllLists(_.range(n), n).forEach(testSimpleMin);
+    };
+
+    const testSimpleMin = (a:Array<number>)=>{
+        const clone:Array<number> = [...a];
+        const h:Heap = new Heap(a);
+        const mins:Array<number> = [];
+        let size:number = a.length;
+        while(h.getVals().length >= 1){
+            const min = h.removeMin();
+            mins.push(min);
+            expect(checkHeap(h)).to.equal(true);
+            expect(h.getVals().length).to.equal(size - 1);
+            size--;
+        }
+        expect(checkHeap(h)).to.equal(true);
+        expect(h.getVals().length).to.equal(0);
+        expect(_eq(mins, clone.sort( (a, b) => a - b))).to.equal(true);
+    };
+
     it("test simple", () =>{
         testSimple([1]);
         testSimple([1, 2]);
@@ -60,6 +93,24 @@ describe("description", () => {
         testAll(5);
         testAll(7);
         testAll(9);
+    }).timeout(60000);
+
+    it("gets minimum", ()=>{
+        testSimpleMin([1]);
+        testSimpleMin([1, 2]);
+        testSimpleMin([2, 1]);
+        testSimpleMin([1, 2, 3]);
+        testSimpleMin([1, 3, 2]);
+        testSimpleMin([2, 1, 3]);
+        testSimpleMin([2, 3, 1]);
+        testSimpleMin([3, 1, 2]);
+        testSimpleMin([3, 2, 1]);
+    });
+
+    it("gets minimum more", () => {
+        testAllMin(5);
+        testAllMin(7);
+        testAllMin(9);
     }).timeout(60000);
 
 });
