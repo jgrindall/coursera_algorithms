@@ -33,12 +33,19 @@ class Node{
 }
 **/
 
+export enum HeapType{
+    MIN = "min",
+    MAX = "max"
+};
+
 export class Heap{
 
     private _vals:Array<number>;
+    private _type:HeapType;
 
-    constructor(vals:Array<number>){
+    constructor(vals:Array<number>, type:HeapType = HeapType.MIN){
         this._vals = [vals[0]];
+        this._type = type;
         if(vals.length >= 2){
             for(let i = 1; i < vals.length; i++){
                 this.insert(vals[i]);
@@ -77,10 +84,19 @@ export class Heap{
         return this._vals;
     }
 
-    _heapProperty(index:number):boolean{
+    _compare(val0:number, val1:number):boolean{
+        if(this._type === HeapType.MIN){
+            return val0 < val1;
+        }
+        return val0 > val1;
+    }
+
+    checkHeapProperty(index:number):boolean{
         const val:number = this._vals[index];
         const children:Array<number> = this.getChildren(index);
-        const incorrectChildren:Array<number> = children.filter((child:number) => val > child);
+        const incorrectChildren:Array<number> = children.filter((child:number) => {
+            return !this._compare(val, child);
+        });
         return incorrectChildren.length === 0;
     }
 
@@ -89,25 +105,26 @@ export class Heap{
         const currentLength = this._vals.length;
         this._vals.push(val);
         let index:number = currentLength;
-        let parentIndex = this._getParentIndex(index);
-        let parentVal = this._vals[parentIndex];
-        while(typeof(parentVal) === "number" && parentVal > val){
+        let parentIndex:number = this._getParentIndex(index);
+        while(parentIndex >= 0 && !this.checkHeapProperty(parentIndex)){
             // bubble up
             this._swapElementsAt(index, parentIndex);
             index = parentIndex;
             if(parentIndex === 0){
                 // we have set the root
-                parentVal = undefined;
-                parentIndex = undefined;
+                parentIndex = -1;
             }
             else{
                 parentIndex = this._getParentIndex(parentIndex);
-                parentVal = this._vals[parentIndex];
             }
         }
     }
 
-    removeMin():number{
+    get():number{
+        return this._vals[0];
+    }
+
+    remove():number{
         const root:number = this._vals[0];
         const last = this._vals[this._vals.length - 1];
         this._vals[0] = last;
@@ -118,14 +135,14 @@ export class Heap{
         else{
             // bubble down
             let index = 0;
-            while(!this._heapProperty(index)){
+            while(!this.checkHeapProperty(index)){
                 const children:Array<number> = this.getChildren(index);
                 if(children.length === 0){
                     throw new Error("heap property failed");
                 }
                 else{
                     let childIndex:number;
-                    if(children.length === 1 || (children.length === 2 && children[0] < children[1])){
+                    if(children.length === 1 || (children.length === 2 && this._compare(children[0], children[1]))){
                         // left child
                         childIndex = this._getChildIndices(index)[0];
                     }

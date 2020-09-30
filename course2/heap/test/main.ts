@@ -1,5 +1,5 @@
 import * as chai from 'chai';
-import {Heap} from "../Heap";
+import {Heap, HeapType} from "../Heap";
 import * as _ from "lodash";
 
 let expect = chai.expect;
@@ -19,10 +19,7 @@ const _eq = (a:Array<number>, b:Array<number>):boolean=>{
 const checkHeap = (h:Heap):boolean=>{
     const vals = h.getVals();
     for(let i = 0; i < vals.length; i++){
-        const val:number = vals[i];
-        const children = h.getChildren(i);
-        const incorrectChildren = children.filter((child:number)=>(child < val));
-        if(incorrectChildren.length >= 1){
+        if(!h.checkHeapProperty(i)){
             return false;
         }
     }
@@ -48,7 +45,9 @@ const getAllLists = (a:Array<number>, len:number):Array<Array<number>>=>{
 describe("description", () => {
 
     const testSimple = (a:Array<number>)=>{
-        const h:Heap = new Heap(a);
+        let h:Heap = new Heap(a);
+        expect(checkHeap(h)).to.equal(true);
+        h = new Heap(a, HeapType.MAX);
         expect(checkHeap(h)).to.equal(true);
     };
 
@@ -56,25 +55,32 @@ describe("description", () => {
         getAllLists(_.range(n), n).forEach(testSimple);
     };
 
-    const testAllMin = (n:number)=>{
-        getAllLists(_.range(n), n).forEach(testSimpleMin);
+    const testAllMinMax = (n:number, type:HeapType = HeapType.MIN)=>{
+        getAllLists(_.range(n), n).forEach((a:Array<number>)=>{
+            testSimpleMinMax(a, type);
+        });
     };
 
-    const testSimpleMin = (a:Array<number>)=>{
+    const testSimpleMinMax = (a:Array<number>, type:HeapType = HeapType.MIN)=>{
         const clone:Array<number> = [...a];
-        const h:Heap = new Heap(a);
-        const mins:Array<number> = [];
+        const sorted = clone.sort( (a:number, b:number) => {
+            if(type === HeapType.MIN){
+                return a - b;
+            }
+            return b - a;
+        });
+        const h:Heap = new Heap(a, type);
+        const vals:Array<number> = [];
         let size:number = a.length;
         while(h.getVals().length >= 1){
-            const min = h.removeMin();
-            mins.push(min);
+            vals.push(h.remove());
             expect(checkHeap(h)).to.equal(true);
             expect(h.getVals().length).to.equal(size - 1);
             size--;
         }
         expect(checkHeap(h)).to.equal(true);
         expect(h.getVals().length).to.equal(0);
-        expect(_eq(mins, clone.sort( (a, b) => a - b))).to.equal(true);
+        expect(_eq(vals, sorted)).to.equal(true);
     };
 
     it("test simple", () =>{
@@ -96,21 +102,39 @@ describe("description", () => {
     }).timeout(60000);
 
     it("gets minimum", ()=>{
-        testSimpleMin([1]);
-        testSimpleMin([1, 2]);
-        testSimpleMin([2, 1]);
-        testSimpleMin([1, 2, 3]);
-        testSimpleMin([1, 3, 2]);
-        testSimpleMin([2, 1, 3]);
-        testSimpleMin([2, 3, 1]);
-        testSimpleMin([3, 1, 2]);
-        testSimpleMin([3, 2, 1]);
+        testSimpleMinMax([1]);
+        testSimpleMinMax([1, 2]);
+        testSimpleMinMax([2, 1]);
+        testSimpleMinMax([1, 2, 3]);
+        testSimpleMinMax([1, 3, 2]);
+        testSimpleMinMax([2, 1, 3]);
+        testSimpleMinMax([2, 3, 1]);
+        testSimpleMinMax([3, 1, 2]);
+        testSimpleMinMax([3, 2, 1]);
     });
 
     it("gets minimum more", () => {
-        testAllMin(5);
-        testAllMin(7);
-        testAllMin(9);
+        testAllMinMax(5);
+        testAllMinMax(7);
+        testAllMinMax(9);
+    }).timeout(60000);
+
+    it("gets maximim", ()=>{
+        testSimpleMinMax([1], HeapType.MAX);
+        testSimpleMinMax([1, 2], HeapType.MAX);
+        testSimpleMinMax([2, 1], HeapType.MAX);
+        testSimpleMinMax([1, 2, 3], HeapType.MAX);
+        testSimpleMinMax([1, 3, 2], HeapType.MAX);
+        testSimpleMinMax([2, 1, 3], HeapType.MAX);
+        testSimpleMinMax([2, 3, 1], HeapType.MAX);
+        testSimpleMinMax([3, 1, 2], HeapType.MAX);
+        testSimpleMinMax([3, 2, 1], HeapType.MAX);
+    });
+
+    it("gets maximum more", () => {
+        testAllMinMax(5, HeapType.MAX);
+        testAllMinMax(7, HeapType.MAX);
+        testAllMinMax(9, HeapType.MAX);
     }).timeout(60000);
 
 });
