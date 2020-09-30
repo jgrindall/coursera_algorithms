@@ -1,5 +1,6 @@
 import * as chai from 'chai';
 import {Heap, HeapType} from "../Heap";
+import {MedianMaintainer}  from "../MedianMaintainer";
 import * as _ from "lodash";
 
 let expect = chai.expect;
@@ -42,7 +43,7 @@ const getAllLists = (a:Array<number>, len:number):Array<Array<number>>=>{
     return lists;
 }
 
-describe("description", () => {
+describe("heaps", () => {
 
     const testSimple = (a:Array<number>)=>{
         let h:Heap = new Heap(a);
@@ -98,7 +99,7 @@ describe("description", () => {
     it("test more", () => {
         testAll(5);
         testAll(7);
-        testAll(9);
+        //testAll(9);
     }).timeout(60000);
 
     it("gets minimum", ()=>{
@@ -116,7 +117,7 @@ describe("description", () => {
     it("gets minimum more", () => {
         testAllMinMax(5);
         testAllMinMax(7);
-        testAllMinMax(9);
+        //testAllMinMax(9);
     }).timeout(60000);
 
     it("gets maximim", ()=>{
@@ -134,7 +135,75 @@ describe("description", () => {
     it("gets maximum more", () => {
         testAllMinMax(5, HeapType.MAX);
         testAllMinMax(7, HeapType.MAX);
-        testAllMinMax(9, HeapType.MAX);
+        //testAllMinMax(9, HeapType.MAX);
     }).timeout(60000);
+
+    it("test large arrays", () => {
+        const a:Array<number> = [];
+        for(let i = 0; i < 100; i++){
+            a.push(Math.sin(i));
+        }
+        testSimpleMinMax(a, HeapType.MIN);
+        const b:Array<number> = [];
+        for(let i = 0; i < 100; i++){
+            b.push(Math.cos(i));
+        }
+        testSimpleMinMax(b, HeapType.MAX);
+
+    }).timeout(60000);
+
+});
+
+const getMedian = (a:Array<number>):number => {
+    const clone:Array<number> = [...a];
+    const sorted = clone.sort( (a:number, b:number) => {
+        return a - b;
+    });
+    if(a.length % 2 === 0){
+        return sorted[a.length/2 - 1];
+    }
+    return sorted[(a.length - 1)/2];
+}
+
+describe("median", () => {
+
+    const test = (a:Array<number>)=>{
+        const median = getMedian(a);
+        const m = new MedianMaintainer();
+        a.forEach(val =>{
+            m.add(val);
+        });
+        expect(median === m.getMedian()).to.equal(true);
+    };
+
+    const testAll = (n:number)=>{
+        getAllLists(_.range(n), n).forEach(test);
+    };
+
+    it("simple", () => {
+        test([10, 5, 7, 11, 8, 14]);
+    }).timeout(60000);
+
+    it("all", () => {
+        testAll(3);
+        testAll(5);
+        testAll(7);
+        //testAll(9);
+    }).timeout(60000);
+
+    it("test large arrays", () => {
+        const a:Array<number> = [];
+        for(let i = 0; i < 100; i++){
+            a.push(Math.sin(i));
+        }
+        test(a);
+        const b:Array<number> = [];
+        for(let i = 0; i < 100; i++){
+            b.push(Math.cos(i));
+        }
+        test(b);
+
+    }).timeout(60000);
+
 
 });

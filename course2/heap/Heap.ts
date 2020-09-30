@@ -44,8 +44,11 @@ export class Heap{
     private _type:HeapType;
 
     constructor(vals:Array<number>, type:HeapType = HeapType.MIN){
-        this._vals = [vals[0]];
         this._type = type;
+        this._vals = [];
+        if(vals.length >= 1){
+            this._vals.push(vals[0]);
+        }
         if(vals.length >= 2){
             for(let i = 1; i < vals.length; i++){
                 this.insert(vals[i]);
@@ -79,7 +82,9 @@ export class Heap{
             2*i + 2
         ];
     }
-
+    getSize():number{
+        return this._vals.length;
+    }
     getVals():Array<number>{
         return this._vals;
     }
@@ -121,6 +126,9 @@ export class Heap{
     }
 
     get():number{
+        if(this._vals.length === 0){
+            return this._type === HeapType.MIN ? Infinity : -Infinity;
+        }
         return this._vals[0];
     }
 
