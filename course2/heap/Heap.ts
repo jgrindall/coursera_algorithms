@@ -1,38 +1,5 @@
 import * as _ from "lodash";
 
-/**
-class Node{
-    private _val:number;
-    private _left?:Node;
-    private _right?:Node;
-    private _parent?:Node;
-    constructor(val:number){
-        this._val = val;
-    }
-    public addLeft(n:Node):void{
-        this._left = n;
-    }
-    public addRight(n:Node):void{
-        this._right = n;
-    }
-    public getLeft():Node{
-        return  this._left;
-    }
-    public getRight():Node{
-        return this._right;
-    }
-    public getVal():number{
-        return this._val;
-    }
-    public getParent():Node{
-        return this._parent;
-    }
-    public setParent(p:Node){
-        this._parent = p;
-    }
-}
-**/
-
 export enum HeapType{
     MIN = "min",
     MAX = "max"
