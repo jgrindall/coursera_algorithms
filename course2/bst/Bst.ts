@@ -20,12 +20,19 @@ export class Node{
         }
         return n;
     }
+    public setVal(val:number){
+        this._val = val;
+    }
     public addLeft(n:Node):void{
+        if(n){
+            n.setParent(this);
+        }
         this._left = n;
-        n.setParent(this);
     }
     public addRight(n:Node):void{
-        n.setParent(this);
+        if(n){
+            n.setParent(this);
+        }
         this._right = n;
     }
     public getLeft():Nullable<Node>{
@@ -223,32 +230,55 @@ export class Bst{
         return entries;
     }
 
+    _remove(nodeInfo:NodeInfo){
+        const numChildren = nodeInfo.node.getNumChildren();
+        const val = nodeInfo.node.getVal();
+        if(numChildren === 0){
+            if(nodeInfo.parentNode){
+                if(nodeInfo.parentNode.getLeft() === nodeInfo.node){
+                    nodeInfo.parentNode.addLeft(undefined);
+                }
+                else{
+                    nodeInfo.parentNode.addRight(undefined);
+                }
+            }
+            else{
+                this._root = undefined;
+            }
+        }
+        else if(numChildren === 1){
+            const uniqueChild = nodeInfo.node.getLeft() || nodeInfo.node.getRight();
+            if(nodeInfo.parentNode){
+                if(nodeInfo.parentNode.getLeft() === nodeInfo.node){
+                    nodeInfo.parentNode.addLeft(uniqueChild);
+                }
+                else{
+                    nodeInfo.parentNode.addRight(uniqueChild);
+                }
+            }
+            else{
+                this._root = uniqueChild;
+            }
+        }
+        else{
+            const predecessor:Node = this.getPredecessorOf(val);
+            const predecessorVal:number = predecessor.getVal();
+            predecessor.setVal(val);
+            nodeInfo.node.setVal(predecessorVal);
+            // predecessor has no right child
+            this._remove({
+                node:predecessor,
+                parentNode:predecessor.getParent()
+            });
+        }
+    }
+
     remove(val:number):boolean{
         const nodeInfo:NodeInfo = this.find(val);
         if(!nodeInfo){
             return false;
         }
-        const numChildren = nodeInfo.node.getNumChildren();
-        if(numChildren === 0){
-            if(nodeInfo.parentNode.getLeft() === nodeInfo.node){
-                nodeInfo.parentNode.addLeft(undefined);
-            }
-            else{
-                nodeInfo.parentNode.addRight(undefined);
-            }
-        }
-        else if(numChildren === 1){
-            const uniqueChild = nodeInfo.node.getLeft() || nodeInfo.node.getRight();
-            if(nodeInfo.parentNode.getLeft() === nodeInfo.node){
-                nodeInfo.parentNode.addLeft(uniqueChild);
-            }
-            else{
-                nodeInfo.parentNode.addRight(uniqueChild);
-            }
-        }
-        else{
-
-        }
+        this._remove(nodeInfo);
     }
 
 }

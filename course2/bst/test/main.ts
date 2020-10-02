@@ -38,6 +38,9 @@ describe("bst", () => {
         if(!n){
             n = b.getRoot();
         }
+        if(!n){
+            return true;
+        }
         expect(b.checkPropertyAtNode(n)).to.equal(true);
         if(n.getLeft()){
             checkIsBst(b, n.getLeft());
@@ -79,9 +82,9 @@ describe("bst", () => {
     };
 
     it("test all", () => {
-        testRandomN(5)
-        testRandomN(7)
-        testRandomN(9)
+        testRandomN(4)
+        testRandomN(6)
+        testRandomN(8)
     }).timeout(60000);
 
     it("test random", () => {
@@ -90,5 +93,29 @@ describe("bst", () => {
         let b = _.range(200).map(Math.cos);
         testSimple(b);
     }).timeout(60000);
+
+    const testDelete = (a:Array<number>, random?:Array<number>)=>{
+        random = random || _.shuffle(a);
+        const b:Bst = new Bst(a);
+        checkIsBst(b);
+        for(let i:number = 0; i < a.length; i++){
+            b.remove(random[i]);
+            checkIsBst(b);
+        }
+    };
+
+    it("test remove simple", ()=>{
+        testDelete([0, 16, 18, 2], [16, 18, 0, 2]);
+        testDelete([1, 2, 3, 4, 5], [2, 5, 1, 3, 4]);
+        testDelete([5, 3, 1, 4, 2]);
+    });
+
+    it("test remove", ()=>{
+        for(let i = 0; i < 20; i++){
+            let a = _.range(20).map(i=>Math.floor(Math.sin(i) * 20));
+            a = _.uniq(a);
+            testDelete(a);
+        }
+    });
 
 });
