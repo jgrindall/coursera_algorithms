@@ -2,13 +2,23 @@ import * as _ from "lodash";
 
 export type Nullable<T> = T | undefined;
 
-class Node{
+export class Node{
     private _val:number;
     private _left?:Node;
     private _right?:Node;
     private _parent?:Node;
     constructor(val:number){
         this._val = val;
+    }
+    public getNumChildren():number{
+        let n:number  = 0;
+        if(this.getLeft()){
+            n++;
+        }
+        if(this.getRight()){
+            n++;
+        }
+        return n;
     }
     public addLeft(n:Node):void{
         this._left = n;
@@ -55,26 +65,50 @@ export class Bst{
         }
     }
 
-    getMin():number{
+    static fromNode(node:Node){
+        const b:Bst = new Bst([]);
+        b.setRoot(node);
+        return b;
+    }
+
+    getPredecessorOf(val:number):Node{
+        const nodeInfo:NodeInfo = this.find(val);
+        const left = nodeInfo.node.getLeft();
+        if(left){
+            return Bst.fromNode(left).getMax();
+        }
+        let parent = nodeInfo.parentNode;
+        if(parent){
+            while(parent && parent.getVal() > val){
+                parent = parent.getParent();
+            }
+            return parent;
+        }
+        else{
+            return undefined;
+        }
+    }
+
+    getMin():Node{
         if(!this._root){
-            return Infinity;
+            return undefined
         }
         let node = this._root;
         while(node && node.getLeft()){
             node = node.getLeft();
         }
-        return node.getVal();
+        return node;
     }
 
-    getMax():number{
+    getMax():Node{
         if(!this._root){
-            return -Infinity;
+            return undefined
         }
         let node = this._root;
         while(node && node.getRight()){
             node = node.getRight();
         }
-        return node.getVal();
+        return node;
     }
 
     static getAllVals(n:Node):Array<number>{
@@ -109,6 +143,10 @@ export class Bst{
         return this._root;
     }
 
+    setRoot(n:Node):void{
+        this._root = n;
+    }
+
     find(val:number) : NodeInfo{
         if(!this._root){
             return {
@@ -117,7 +155,7 @@ export class Bst{
             };
         }
         let node:Nullable<Node> = this._root;
-        let parentNode:Nullable<Node> = this._root;
+        let parentNode:Nullable<Node> = undefined;
         while(node && node.getVal() !== val){
             parentNode = node;
             if(val > node.getVal()){
@@ -154,6 +192,63 @@ export class Bst{
 
     getList():Array<number>{
         return this._root ? Bst.getAllVals(this._root) : [];
+    }
+
+    getEntriesForNode(n:Node):Array<string>{
+        const left:Node = this._root.getLeft(), right:Node = this._root.getRight();
+        const entries:Array<string> = [];
+        entries.push(left ? '' + left.getVal() : "null");
+        entries.push(right ? '' + right.getVal() : "null");
+        return entries;
+    }
+
+    toString():string{
+        return JSON.stringify(this.toHash(), null, 2);
+    }
+    toHash():object{
+        if(!this._root){
+            return {
+                '<empty>':"<empty>"
+            };
+        }
+        const left:Node = this._root.getLeft(), right:Node = this._root.getRight();
+        const entries = {};
+        entries['' + this._root.getVal()] = this.getEntriesForNode(this._root)
+        if(left){
+            (<any>Object).assign(entries, Bst.fromNode(left).toHash());
+        }
+        if(right){
+            (<any>Object).assign(entries, Bst.fromNode(right).toHash());
+        }
+        return entries;
+    }
+
+    remove(val:number):boolean{
+        const nodeInfo:NodeInfo = this.find(val);
+        if(!nodeInfo){
+            return false;
+        }
+        const numChildren = nodeInfo.node.getNumChildren();
+        if(numChildren === 0){
+            if(nodeInfo.parentNode.getLeft() === nodeInfo.node){
+                nodeInfo.parentNode.addLeft(undefined);
+            }
+            else{
+                nodeInfo.parentNode.addRight(undefined);
+            }
+        }
+        else if(numChildren === 1){
+            const uniqueChild = nodeInfo.node.getLeft() || nodeInfo.node.getRight();
+            if(nodeInfo.parentNode.getLeft() === nodeInfo.node){
+                nodeInfo.parentNode.addLeft(uniqueChild);
+            }
+            else{
+                nodeInfo.parentNode.addRight(uniqueChild);
+            }
+        }
+        else{
+
+        }
     }
 
 }
