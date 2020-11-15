@@ -2,15 +2,84 @@ import * as chai from 'chai';
 import {Hash, AdjList} from "../AdjList";
 import * as _ from "lodash";
 import {Prim, getTotalWeight} from "../Prim";
+import {Heap, HeapType} from "../Heap";
 
 let expect = chai.expect;
 
-const _eq = (a:Array<string>, b:Array<string>):boolean=>{
+const _eqStr = (a:Array<string>, b:Array<string>):boolean=>{
     if(a.length !== b.length){
         return false;
     }
     return _.difference(a, b).length === 0 && _.difference(b, a).length === 0;
 };
+
+const _eqNum = (a:Array<number>, b:Array<number>):boolean=>{
+    if(a.length !== b.length){
+        return false;
+    }
+    for(let i = 0; i < a.length; i++){
+        if(a[i] !== b[i]){
+            return false;
+        }
+    }
+    return true;
+};
+
+class Node{
+    vertex:number;
+    val:number;
+
+    constructor(_vertex:number, _val:number){
+        this.vertex = _vertex;
+        this.val = _val;
+    }
+}
+
+const checkHeap = (h:Heap<Node>):boolean=>{
+    const vals = h.getVals();
+    for(let i = 0; i < vals.length; i++){
+        if(!h.checkHeapProperty(i)){
+            return false;
+        }
+    }
+    return true;
+};
+
+const getAllLists = (a:Array<number>, len:number):Array<Array<number>>=>{
+    if(len === 0 || a.length === 0){
+        return [];
+    }
+    else if(len === 1){
+        return a.map(entry => [entry]);
+    }
+    const lists:Array<Array<number>> = [];
+    a.forEach(entry0=>{
+        getAllLists(_.without(a, entry0), len - 1).forEach(list=>{
+            lists.push([entry0, ...list]);
+        });
+    });
+    return lists;
+};
+
+
+describe("heaps", () => {
+
+    const testAll = (n:number)=>{
+        getAllLists(_.range(n), n).forEach((list:Array<number>)=>{
+            const nodeArray:Array<Node> = list.map((a:number) => {
+                return new Node(a, a);
+            });
+            let h:Heap<Node> = new Heap<Node>(nodeArray);
+            expect(checkHeap(h)).to.equal(true);
+        });
+    };
+
+    it("works", () => {
+        testAll(7);
+    }).timeout(60000);
+
+
+});
 
 const g1:Hash = {
     '1': [
@@ -112,8 +181,7 @@ const g3:Hash = {
 
 };
 
-
-describe("description", () => {
+describe("Prim simple", () => {
 
     it("simple test from lecture", () =>{
         const g = new AdjList(g1);
@@ -136,5 +204,29 @@ describe("description", () => {
         expect(getTotalWeight(mstHash)).to.equal(16);
     });
 
+});
+
+describe("Prim advanced", () => {
+
+    it("simple test from lecture", () =>{
+        const g = new AdjList(g1);
+        const mst:AdjList = new Prim(g).getMST();
+        const mstHash:Hash = mst.getHash();
+        expect(getTotalWeight(mstHash)).to.equal(7);
+    }).timeout(10000);
+
+    it("larger test", () =>{
+        const g = new AdjList(g2);
+        const mst:AdjList = new Prim(g).getMST();
+        const mstHash:Hash = mst.getHash();
+        expect(getTotalWeight(mstHash)).to.equal(37);
+    });
+
+    it("larger test", () =>{
+        const g = new AdjList(g3);
+        const mst:AdjList = new Prim(g).getMST();
+        const mstHash:Hash = mst.getHash();
+        expect(getTotalWeight(mstHash)).to.equal(16);
+    });
 
 });
