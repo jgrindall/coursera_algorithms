@@ -2,28 +2,10 @@ import * as chai from 'chai';
 import {Hash, AdjList} from "../AdjList";
 import * as _ from "lodash";
 import {Prim, getTotalWeight} from "../Prim";
+import {PrimAdv, getTotalWeightAdv} from "../PrimAdv";
 import {Heap, HeapType} from "../Heap";
 
 let expect = chai.expect;
-
-const _eqStr = (a:Array<string>, b:Array<string>):boolean=>{
-    if(a.length !== b.length){
-        return false;
-    }
-    return _.difference(a, b).length === 0 && _.difference(b, a).length === 0;
-};
-
-const _eqNum = (a:Array<number>, b:Array<number>):boolean=>{
-    if(a.length !== b.length){
-        return false;
-    }
-    for(let i = 0; i < a.length; i++){
-        if(a[i] !== b[i]){
-            return false;
-        }
-    }
-    return true;
-};
 
 class Node{
     vertex:number;
@@ -210,23 +192,23 @@ describe("Prim advanced", () => {
 
     it("simple test from lecture", () =>{
         const g = new AdjList(g1);
-        const mst:AdjList = new Prim(g).getMST();
+        const mst:AdjList = new PrimAdv(g).getMST();
         const mstHash:Hash = mst.getHash();
-        expect(getTotalWeight(mstHash)).to.equal(7);
+        expect(getTotalWeightAdv(mstHash)).to.equal(7);
     }).timeout(10000);
 
     it("larger test", () =>{
         const g = new AdjList(g2);
-        const mst:AdjList = new Prim(g).getMST();
+        const mst:AdjList = new PrimAdv(g).getMST();
         const mstHash:Hash = mst.getHash();
-        expect(getTotalWeight(mstHash)).to.equal(37);
+        expect(getTotalWeightAdv(mstHash)).to.equal(37);
     });
 
     it("larger test", () =>{
         const g = new AdjList(g3);
-        const mst:AdjList = new Prim(g).getMST();
+        const mst:AdjList = new PrimAdv(g).getMST();
         const mstHash:Hash = mst.getHash();
-        expect(getTotalWeight(mstHash)).to.equal(16);
+        expect(getTotalWeightAdv(mstHash)).to.equal(16);
     });
 
 });

@@ -12,7 +12,7 @@ export class Node{
     }
 }
 
-export const getTotalWeight = (hash:Hash):number=>{
+export const getTotalWeightAdv = (hash:Hash):number=>{
     let totalWeight:number = 0;
     Object.keys(hash).forEach(key=>{
         const edges = hash[key];
@@ -34,7 +34,7 @@ export class PrimAdv{
     }
 
     _getMinEdge(arr1:Array<string>, arr2:Array<string>):WeightedEdge{
-        
+
     }
 
     getMST():AdjList{
