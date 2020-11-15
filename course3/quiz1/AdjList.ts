@@ -29,7 +29,7 @@ export class AdjList{
         return this.hash;
     }
     getWeight(node0:string, node1:string):number{
-        const edge:WeightedEdge = this.hash[node0].find(edge => edge[1] === node1);
+        const edge:WeightedEdge = this.getEdge(node0, node1);
         return edge[2];
     }
     getEdge(node0:string, node1:string):WeightedEdge{
@@ -43,6 +43,9 @@ export class AdjList{
     }
     getNeighbours(a:string):Array<string>{
         return this.hash[a].map((e:WeightedEdge) => e[1]);
+    }
+    getEdgesFrom(a:string):Array<WeightedEdge>{
+        return this.hash[a];
     }
     addEdge(node0:string, node1:string, length:number):void{
         if(!this.hasEdge(node0, node1)){
