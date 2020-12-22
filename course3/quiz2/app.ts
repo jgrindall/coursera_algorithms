@@ -1,5 +1,5 @@
 
 import * as _ from 'lodash';
 import fs from 'fs';
-
-console.log('ok')
+import {AdjList} from './AdjList';
+import {Kruskal, getTotalWeight} from './Kruskal';
