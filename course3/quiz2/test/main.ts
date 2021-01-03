@@ -1,7 +1,9 @@
 import * as chai from 'chai';
 import {Hash, AdjList} from "../AdjList";
 import * as _ from "lodash";
-import {Kruskal, getTotalWeight, UnionFind} from "../Kruskal";
+import {Kruskal, getTotalWeight} from "../Kruskal";
+import {UnionFind} from "../UnionFind";
+import {Clustering, Cluster} from "../Clustering";
 
 let expect = chai.expect;
 
@@ -145,4 +147,79 @@ it("larger test", () =>{
     const mst:AdjList = new Kruskal(g).getMST();
     const mstHash:Hash = mst.getHash();
     expect(getTotalWeight(mstHash)).to.equal(16);
+});
+
+interface Point{
+    x:number,
+    y:number
+}
+
+const sortClusterArray = (a:Array<Cluster>):Array<Cluster> =>{
+    const aSorted:Array<Cluster> = a.map(c=>[...c].sort());
+    aSorted.sort( (c1:Cluster, c2:Cluster)=>{
+        return c1[0] < c2[0] ? -1 : (c1[0] > c2[0] ? 1 : 0);
+    });
+    return aSorted;
+};
+
+const clustersEqual = (a:Array<Cluster>, b:Array<Cluster>):boolean =>{
+    if(a.length !== b.length){
+        return false;
+    }
+    return JSON.stringify(sortClusterArray(a)) === JSON.stringify(sortClusterArray(b));
+}
+
+const DELTA = 0.001;
+
+const getPoint = (i:number, j:number):Point=>{
+    return {
+        x:i + 0.5 + (Math.random() - 0.5)*DELTA,
+        y:j + 0.5 + (Math.random() - 0.5)*DELTA
+    };
+};
+const dist = (p:Point, q:Point) => Math.sqrt((p.x - q.x)*(p.x - q.x) + (p.y - q.y)*(p.y - q.y));
+
+const getClusteredGraph = (n:number, numPerCluster:number):AdjList=>{
+    const pts:Array<Point> = [];
+    for(let i:number = 0; i <= n - 1; i++){
+        for(let j:number = 0; j <= n - 1; j++){
+            for(let k:number = 1; k <= numPerCluster; k++){
+                pts.push(getPoint(i, j));
+            }
+        }
+    }
+    const g:Hash = {};
+    for(let i:number = 0; i < pts.length; i++){
+        g["" + i] = [];
+    }
+    for(let i:number = 0; i < pts.length; i++){
+        for(let j:number = 0; j < pts.length; j++){
+            if(i !== j){
+                g["" + i].push(["" + i, "" + j, dist(pts[i], pts[j])]);
+            }
+        }
+    }
+    return new AdjList(g);
+};
+
+const testCluster = (n:number)=>{
+    const numPerCluster:number = 10;
+    const graph:AdjList = getClusteredGraph(n, numPerCluster);
+    const clustering:Clustering = new Clustering(graph);
+    const clusters:Array<Cluster> = clustering.getClusters(n*n);
+    const expectedClusters:Array<Cluster> = [];
+    for(let i:number = 0; i < n*n; i++){
+        expectedClusters.push(_.range(i*numPerCluster, (i + 1)*numPerCluster).map(n=> "" + n));
+    }
+    const spacing = clustering.getSpacing();
+    expect(spacing <= 1 + DELTA && spacing >= 1 - DELTA).to.equal(true);
+    expect(clustersEqual(clusters, expectedClusters)).to.equal(true);
+};
+
+it("test clustering", ()=>{
+    testCluster(2);
+    testCluster(3);
+    testCluster(4);
+    testCluster(5);
+    testCluster(6);
 });
