@@ -49,7 +49,8 @@ export class UnionFind{
         const leader0 = this.getLeader(node0);
         const leader1 = this.getLeader(node1);
         if(leader0 === leader1){
-            throw new Error("cannot union, already union");
+            return;
+            //throw new Error("cannot union, already union");
         }
         const component0:Array<string> = this.leadersToNodes.get(leader0);
         const component1:Array<string> = this.leadersToNodes.get(leader1);
@@ -73,6 +74,10 @@ export class UnionFind{
         this.leadersToNodes.set(smallLeader, []);
         this.leadersToNodes.set(largeLeader, large.concat(small));
         this.numComponents--;
+    }
+
+    public contains(node:string):boolean{
+        return !!this.nodesToLeaders.get(node);
     }
 
     public getLeader(node:string):string{
