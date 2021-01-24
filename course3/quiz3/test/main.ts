@@ -26,7 +26,7 @@ it("test stringToTree", ()=>{
 });
 
 it("test tree", ()=>{
-    //let alphabet = ["a", "b", "c", "d", "e", "f"];
-    //let weights = [3, 2, 6, 8, 2, 6];
-    //console.log(new Huffman(alphabet, weights).generate().toString());
+    let alphabet = ["a", "b", "c", "d", "e", "f"];
+    let weights = [3, 2, 6, 8, 2, 6];
+    console.log(new Huffman(alphabet, weights).generate());
 });

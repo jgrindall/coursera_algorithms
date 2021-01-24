@@ -113,28 +113,31 @@ export const getMinPair = (weights:number[]):Pair=>{
 type ValOrTree<T> = T | Node<T>;
 
 export class Huffman{
-    private alphabet:ValOrTree<string>[] = [];
+    private alphabet:string[] = [];
     private weights:number[] = [];
-    constructor(alphabet:ValOrTree<string>[], weights:number[]){
+    constructor(alphabet:string[], weights:number[]){
         this.alphabet = alphabet;
         this.weights = weights;
     }
-    generate():ValOrTree<string>{
-        console.log("alphabet", this.alphabet.toString());
+    generate():string{
+        console.log("alphabet", this.alphabet);
+        console.log("weights", this.weights);
+
         if(this.alphabet.length === 1){
             return this.alphabet[0];
         }
         const indicesToMerge:Pair = getMinPair(this.weights);
+        console.log(indicesToMerge);
         const newWeights:number[] = [];
-        const newAlphabet:ValOrTree<string>[] = [];
+        const newAlphabet:string[] = [];
         for(let i = 0; i < this.alphabet.length; i++){
             if(i !== indicesToMerge[0] && i !== indicesToMerge[1]){
                 newWeights.push(this.weights[i]);
                 newAlphabet.push(this.alphabet[i]);
             }
         }
-        //newWeights.push(this.weights[indicesToMerge[0]] + this.weights[indicesToMerge[1]]);
-        //newAlphabet.push(join(this.alphabet[indicesToMerge[0]], this.alphabet[indicesToMerge[1]]));
+        newWeights.push(this.weights[indicesToMerge[0]] + this.weights[indicesToMerge[1]]);
+        newAlphabet.push("empty(" + this.alphabet[indicesToMerge[0]] + ")(" + this.alphabet[indicesToMerge[1]] + ")");
         //console.log("newAlphabet", newAlphabet.toString());
         return new Huffman(newAlphabet, newWeights).generate();
     }
