@@ -15,10 +15,10 @@ const solve = (file:string, maxCols?:number)=>{
         const values = [];
         lines.forEach(line=>{
             const data = line.split(" ").map(a=>parseInt(a.trim()));
-            weights.push(data[0]);
-            values.push(data[1]);
+            values.push(data[0]);
+            weights.push(data[1]);
         });
-        const k = new Knapsack(weights, values, capacity);
+        const k = new Knapsack(weights, values, capacity, maxCols);
         const a = k.generateSolutions();
         console.log(_.last(a.get(weights.length)));
     });

@@ -38,9 +38,6 @@ export class Knapsack{
         this.getColumn(i)[c] = val;
     }
     fillColumn(i:number){
-        if(i % 50 === 0){
-            console.log("col", i);
-        }
         this.createColumn(i);
         const prevColumn:number[] = this.getColumn(i - 1);
         for(let c = 0; c <= this.capacity; c++){
