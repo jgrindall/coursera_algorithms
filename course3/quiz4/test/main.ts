@@ -1,5 +1,7 @@
 import * as chai from 'chai';
 import {Knapsack} from "../Knapsack";
+import {SeqAlignment} from "../SeqAlignment";
+import {OptSearchTree} from "../OptSearchTree";
 
 import * as _ from "lodash";
 
@@ -199,4 +201,103 @@ it("test optimal2", ()=>{
     expect(a2.get(2)).to.equal(undefined);
     expect(a2.get(3)).to.equal(undefined);
     expect(_.last(a2.get(6))).to.equal(150);
+});
+
+it("basic seq alingment", ()=>{
+    let seq0 = 'a';
+    let seq1 = 'a';
+    const constMismatcher = (a:string, b:string)=>{
+        if(a === b){
+            return 0;
+        }
+        return 1;
+    };
+    const s = new SeqAlignment(seq0, seq1, 0.5, constMismatcher);
+    const a = s.generateSolutions();
+    expect(a[0][0]).to.equal(0);
+    expect(a[0][1]).to.equal(0.5);
+    expect(a[1][0]).to.equal(0.5);
+    expect(a[1][1]).to.equal(0);
+});
+
+it("seq alingment", ()=>{
+    let seq0 = 'at';
+    let seq1 = 'a';
+    const constMismatcher = (a:string, b:string)=>{
+        if(a === b){
+            return 0;
+        }
+        return 1;
+    };
+    const s = new SeqAlignment(seq0, seq1, 0.5, constMismatcher);
+    const a = s.generateSolutions();
+    expect(a[0][0]).to.equal(0);
+    expect(a[0][1]).to.equal(0.5);
+    expect(a[1][0]).to.equal(0.5);
+    expect(a[1][1]).to.equal(0);
+    expect(a[2][0]).to.equal(1);
+    expect(a[2][1]).to.equal(0.5);
+});
+
+const BIO = {
+    "AA":0,
+    "AG":5,
+    "AC":5,
+    "AT":5,
+    "GA":5,
+    "GG":0,
+    "GC":4,
+    "GT":5,
+    "CA":5,
+    "CG":4,
+    "CC":0,
+    "CT":5,
+    "TA":5,
+    "TG":5,
+    "TC":5,
+    "TT":0
+};
+
+it("more seq alignment", ()=>{
+    let seq0 = 'AGTGCTGAAAGTTGCGCCAGTGAC';
+    let seq1 = 'AGTGCTGAAGTTCGCCAGTTGACG';
+    const s = new SeqAlignment(seq0, seq1, 3, (a:string, b:string)=>{
+        return BIO[a + b];
+    });
+    const a = s.generateSolutions();
+    expect(a[seq0.length][seq1.length]).to.equal(12);
+});
+
+it("more seq alignment", ()=>{
+    let seq0 = 'CACAATTTTTCCCAGAGAGA';
+    let seq1 = 'CGAATTTTTCCCAGAGAGA';
+    const s = new SeqAlignment(seq0, seq1, 3, (a:string, b:string)=>{
+        return BIO[a + b];
+    });
+    const a = s.generateSolutions();
+    expect(a[seq0.length][seq1.length]).to.equal(7);
+});
+
+it("bin search tree - sumProbabilities", ()=>{
+    let probabilities = [4, 6, 4, 2, 1];
+    const opt = new OptSearchTree(probabilities);
+    expect(opt.sumProbabilities(1, 1)).to.equal(4);
+    expect(opt.sumProbabilities(2, 2)).to.equal(6);
+    expect(opt.sumProbabilities(3, 3)).to.equal(4);
+    expect(opt.sumProbabilities(4, 4)).to.equal(2);
+    expect(opt.sumProbabilities(5, 5)).to.equal(1);
+    expect(opt.sumProbabilities(1, 2)).to.equal(10);
+    expect(opt.sumProbabilities(1, 3)).to.equal(14);
+    expect(opt.sumProbabilities(1, 4)).to.equal(16);
+    expect(opt.sumProbabilities(1, 5)).to.equal(17);
+    expect(opt.sumProbabilities(2, 4)).to.equal(12);
+    expect(opt.sumProbabilities(3, 5)).to.equal(7);
+    expect(opt.sumProbabilities(4, 5)).to.equal(3);
+});
+
+
+it("bin search tree", ()=>{
+    let probabilities = [34, 8, 50];
+    const opt = new OptSearchTree(probabilities);
+    expect(opt.generate()).to.equal(142);
 });
