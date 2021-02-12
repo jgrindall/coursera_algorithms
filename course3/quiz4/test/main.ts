@@ -7,6 +7,17 @@ import * as _ from "lodash";
 
 let expect = chai.expect;
 
+const _eq = <T>(a:Array<T>, b:Array<T>):boolean=>{
+    if(a.length !== b.length){
+        return false;
+    }
+    for(let i = 0; i < a.length; i++){
+        if(a[i] !== b[i]){
+            return false;
+        }
+    }
+    return true;
+}
 
 it("test basic cases", ()=>{
     let values = [5];
@@ -15,19 +26,21 @@ it("test basic cases", ()=>{
     const k = new Knapsack(weights, values, capacity);
     const a = k.generateSolutions();
     //a[i][j] = best value for using first 'i' items and capacity j
-    expect(a.get(0)[0]).to.equal(0);
-    expect(a.get(0)[1]).to.equal(0);
-    expect(a.get(0)[2]).to.equal(0);
-    expect(a.get(0)[3]).to.equal(0);
-    expect(a.get(0)[4]).to.equal(0);
-    expect(a.get(0)[5]).to.equal(0);
+    expect(a.get(0)[0].totalValue).to.equal(0);
+    expect(a.get(0)[1].totalValue).to.equal(0);
+    expect(a.get(0)[2].totalValue).to.equal(0);
+    expect(a.get(0)[3].totalValue).to.equal(0);
+    expect(a.get(0)[4].totalValue).to.equal(0);
+    expect(a.get(0)[5].totalValue).to.equal(0);
 
-    expect(a.get(1)[0]).to.equal(0);
-    expect(a.get(1)[1]).to.equal(0);
-    expect(a.get(1)[2]).to.equal(0);
-    expect(a.get(1)[3]).to.equal(0);
-    expect(a.get(1)[4]).to.equal(0);
-    expect(a.get(1)[5]).to.equal(5);
+    expect(a.get(1)[0].totalValue).to.equal(0);
+    expect(a.get(1)[1].totalValue).to.equal(0);
+    expect(a.get(1)[2].totalValue).to.equal(0);
+    expect(a.get(1)[3].totalValue).to.equal(0);
+    expect(a.get(1)[4].totalValue).to.equal(0);
+    expect(a.get(1)[5].totalValue).to.equal(5);
+
+    expect(_eq(a.get(1)[5].weights, [0])).to.equal(true);
 });
 
 
@@ -38,23 +51,25 @@ it("test basic cases 2", ()=>{
     const k = new Knapsack(weights, values, capacity);
     const a = k.generateSolutions();
     //a[i][j] = best value for using first 'i' items and capacity j
-    expect(a.get(0)[0]).to.equal(0);
-    expect(a.get(0)[1]).to.equal(0);
-    expect(a.get(0)[2]).to.equal(0);
-    expect(a.get(0)[3]).to.equal(0);
-    expect(a.get(0)[4]).to.equal(0);
+    expect(a.get(0)[0].totalValue).to.equal(0);
+    expect(a.get(0)[1].totalValue).to.equal(0);
+    expect(a.get(0)[2].totalValue).to.equal(0);
+    expect(a.get(0)[3].totalValue).to.equal(0);
+    expect(a.get(0)[4].totalValue).to.equal(0);
 
-    expect(a.get(1)[0]).to.equal(0);
-    expect(a.get(1)[1]).to.equal(0);
-    expect(a.get(1)[2]).to.equal(1);
-    expect(a.get(1)[3]).to.equal(1);
-    expect(a.get(1)[4]).to.equal(1);
+    expect(a.get(1)[0].totalValue).to.equal(0);
+    expect(a.get(1)[1].totalValue).to.equal(0);
+    expect(a.get(1)[2].totalValue).to.equal(1);
+    expect(a.get(1)[3].totalValue).to.equal(1);
+    expect(a.get(1)[4].totalValue).to.equal(1);
 
-    expect(a.get(2)[0]).to.equal(0);
-    expect(a.get(2)[1]).to.equal(0);
-    expect(a.get(2)[2]).to.equal(1);
-    expect(a.get(2)[3]).to.equal(1);
-    expect(a.get(2)[4]).to.equal(2);
+    expect(a.get(2)[0].totalValue).to.equal(0);
+    expect(a.get(2)[1].totalValue).to.equal(0);
+    expect(a.get(2)[2].totalValue).to.equal(1);
+    expect(a.get(2)[3].totalValue).to.equal(1);
+    expect(a.get(2)[4].totalValue).to.equal(2);
+
+    expect(_eq(a.get(2)[4].weights, [0, 1])).to.equal(true);
 
 });
 
@@ -65,45 +80,49 @@ it("test from the lecture", ()=>{
     const k = new Knapsack(weights, values, capacity);
     const a = k.generateSolutions();
     //a[i][j] = best value for using first 'i' items and capacity j
-    expect(a.get(0)[0]).to.equal(0);
-    expect(a.get(0)[1]).to.equal(0);
-    expect(a.get(0)[2]).to.equal(0);
-    expect(a.get(0)[3]).to.equal(0);
-    expect(a.get(0)[4]).to.equal(0);
-    expect(a.get(0)[5]).to.equal(0);
-    expect(a.get(0)[6]).to.equal(0);
+    expect(a.get(0)[0].totalValue).to.equal(0);
+    expect(a.get(0)[1].totalValue).to.equal(0);
+    expect(a.get(0)[2].totalValue).to.equal(0);
+    expect(a.get(0)[3].totalValue).to.equal(0);
+    expect(a.get(0)[4].totalValue).to.equal(0);
+    expect(a.get(0)[5].totalValue).to.equal(0);
+    expect(a.get(0)[6].totalValue).to.equal(0);
 
-    expect(a.get(1)[0]).to.equal(0);
-    expect(a.get(1)[1]).to.equal(0);
-    expect(a.get(1)[2]).to.equal(0);
-    expect(a.get(1)[3]).to.equal(0);
-    expect(a.get(1)[4]).to.equal(3);
-    expect(a.get(1)[5]).to.equal(3);
-    expect(a.get(1)[6]).to.equal(3);
+    expect(a.get(1)[0].totalValue).to.equal(0);
+    expect(a.get(1)[1].totalValue).to.equal(0);
+    expect(a.get(1)[2].totalValue).to.equal(0);
+    expect(a.get(1)[3].totalValue).to.equal(0);
+    expect(a.get(1)[4].totalValue).to.equal(3);
+    expect(a.get(1)[5].totalValue).to.equal(3);
+    expect(a.get(1)[6].totalValue).to.equal(3);
 
-    expect(a.get(2)[0]).to.equal(0);
-    expect(a.get(2)[1]).to.equal(0);
-    expect(a.get(2)[2]).to.equal(0);
-    expect(a.get(2)[3]).to.equal(2);
-    expect(a.get(2)[4]).to.equal(3);
-    expect(a.get(2)[5]).to.equal(3);
-    expect(a.get(2)[6]).to.equal(3);
+    expect(a.get(2)[0].totalValue).to.equal(0);
+    expect(a.get(2)[1].totalValue).to.equal(0);
+    expect(a.get(2)[2].totalValue).to.equal(0);
+    expect(a.get(2)[3].totalValue).to.equal(2);
+    expect(a.get(2)[4].totalValue).to.equal(3);
+    expect(a.get(2)[5].totalValue).to.equal(3);
+    expect(a.get(2)[6].totalValue).to.equal(3);
 
-    expect(a.get(3)[0]).to.equal(0);
-    expect(a.get(3)[1]).to.equal(0);
-    expect(a.get(3)[2]).to.equal(4);
-    expect(a.get(3)[3]).to.equal(4);
-    expect(a.get(3)[4]).to.equal(4);
-    expect(a.get(3)[5]).to.equal(6);
-    expect(a.get(3)[6]).to.equal(7);
+    expect(a.get(3)[0].totalValue).to.equal(0);
+    expect(a.get(3)[1].totalValue).to.equal(0);
+    expect(a.get(3)[2].totalValue).to.equal(4);
+    expect(a.get(3)[3].totalValue).to.equal(4);
+    expect(a.get(3)[4].totalValue).to.equal(4);
+    expect(a.get(3)[5].totalValue).to.equal(6);
+    expect(a.get(3)[6].totalValue).to.equal(7);
 
-    expect(a.get(4)[0]).to.equal(0);
-    expect(a.get(4)[1]).to.equal(0);
-    expect(a.get(4)[2]).to.equal(4);
-    expect(a.get(4)[3]).to.equal(4);
-    expect(a.get(4)[4]).to.equal(4);
-    expect(a.get(4)[5]).to.equal(8);
-    expect(a.get(4)[6]).to.equal(8);
+    expect(a.get(4)[0].totalValue).to.equal(0);
+    expect(a.get(4)[1].totalValue).to.equal(0);
+    expect(a.get(4)[2].totalValue).to.equal(4);
+    expect(a.get(4)[3].totalValue).to.equal(4);
+    expect(a.get(4)[4].totalValue).to.equal(4);
+    expect(a.get(4)[5].totalValue).to.equal(8);
+    expect(a.get(4)[6].totalValue).to.equal(8);
+
+    console.log(a.get(4)[6]);
+
+    expect(_eq(a.get(4)[6].weights, [2, 3])).to.equal(true);
 
 });
 
@@ -117,29 +136,31 @@ it("test from the lecture with maxColumns", ()=>{
     expect(a.get(0)).to.equal(undefined);
     expect(a.get(1)).to.equal(undefined);
 
-    expect(a.get(2)[0]).to.equal(0);
-    expect(a.get(2)[1]).to.equal(0);
-    expect(a.get(2)[2]).to.equal(0);
-    expect(a.get(2)[3]).to.equal(2);
-    expect(a.get(2)[4]).to.equal(3);
-    expect(a.get(2)[5]).to.equal(3);
-    expect(a.get(2)[6]).to.equal(3);
+    expect(a.get(2)[0].totalValue).to.equal(0);
+    expect(a.get(2)[1].totalValue).to.equal(0);
+    expect(a.get(2)[2].totalValue).to.equal(0);
+    expect(a.get(2)[3].totalValue).to.equal(2);
+    expect(a.get(2)[4].totalValue).to.equal(3);
+    expect(a.get(2)[5].totalValue).to.equal(3);
+    expect(a.get(2)[6].totalValue).to.equal(3);
 
-    expect(a.get(3)[0]).to.equal(0);
-    expect(a.get(3)[1]).to.equal(0);
-    expect(a.get(3)[2]).to.equal(4);
-    expect(a.get(3)[3]).to.equal(4);
-    expect(a.get(3)[4]).to.equal(4);
-    expect(a.get(3)[5]).to.equal(6);
-    expect(a.get(3)[6]).to.equal(7);
+    expect(a.get(3)[0].totalValue).to.equal(0);
+    expect(a.get(3)[1].totalValue).to.equal(0);
+    expect(a.get(3)[2].totalValue).to.equal(4);
+    expect(a.get(3)[3].totalValue).to.equal(4);
+    expect(a.get(3)[4].totalValue).to.equal(4);
+    expect(a.get(3)[5].totalValue).to.equal(6);
+    expect(a.get(3)[6].totalValue).to.equal(7);
 
-    expect(a.get(4)[0]).to.equal(0);
-    expect(a.get(4)[1]).to.equal(0);
-    expect(a.get(4)[2]).to.equal(4);
-    expect(a.get(4)[3]).to.equal(4);
-    expect(a.get(4)[4]).to.equal(4);
-    expect(a.get(4)[5]).to.equal(8);
-    expect(a.get(4)[6]).to.equal(8);
+    expect(a.get(4)[0].totalValue).to.equal(0);
+    expect(a.get(4)[1].totalValue).to.equal(0);
+    expect(a.get(4)[2].totalValue).to.equal(4);
+    expect(a.get(4)[3].totalValue).to.equal(4);
+    expect(a.get(4)[4].totalValue).to.equal(4);
+    expect(a.get(4)[5].totalValue).to.equal(8);
+    expect(a.get(4)[6].totalValue).to.equal(8);
+
+    expect(_eq(a.get(4)[6].weights, [2, 3])).to.equal(true);
 
 });
 
@@ -151,7 +172,7 @@ it("test optimal", ()=>{
     const k = new Knapsack(weights, values, capacity);
     const a = k.generateSolutions();
     //a[i][j] = best value for using first 'i' items and capacity j
-    expect(_.last(a.get(5))).to.equal(51);
+    expect(_.last(a.get(5)).totalValue).to.equal(51);
 
     // using maxCols
 
@@ -162,7 +183,7 @@ it("test optimal", ()=>{
     expect(a1.get(1)).to.equal(undefined);
     expect(a1.get(2)).to.equal(undefined);
     expect(a1.get(3)).to.equal(undefined);
-    expect(_.last(a1.get(5))).to.equal(51);
+    expect(_.last(a1.get(5)).totalValue).to.equal(51);
 
     const k2 = new Knapsack(weights, values, capacity, 3);
     const a2 = k2.generateSolutions();
@@ -170,7 +191,7 @@ it("test optimal", ()=>{
     expect(a2.get(0)).to.equal(undefined);
     expect(a2.get(1)).to.equal(undefined);
     expect(a2.get(2)).to.equal(undefined);
-    expect(_.last(a2.get(5))).to.equal(51);
+    expect(_.last(a2.get(5)).totalValue).to.equal(51);
 
 });
 
@@ -181,7 +202,7 @@ it("test optimal2", ()=>{
     let values = [50, 50, 64, 46, 50, 5];
     const k = new Knapsack(weights, values, capacity);
     const a = k.generateSolutions();
-    expect(_.last(a.get(6))).to.equal(150);
+    expect(_.last(a.get(6)).totalValue).to.equal(150);
 
     // using maxCols
 
@@ -192,7 +213,7 @@ it("test optimal2", ()=>{
     expect(a1.get(2)).to.equal(undefined);
     expect(a1.get(3)).to.equal(undefined);
     expect(a1.get(4)).to.equal(undefined);
-    expect(_.last(a1.get(6))).to.equal(150);
+    expect(_.last(a1.get(6)).totalValue).to.equal(150);
 
     const k2 = new Knapsack(weights, values, capacity, 3);
     const a2 = k2.generateSolutions();
@@ -200,7 +221,19 @@ it("test optimal2", ()=>{
     expect(a2.get(1)).to.equal(undefined);
     expect(a2.get(2)).to.equal(undefined);
     expect(a2.get(3)).to.equal(undefined);
-    expect(_.last(a2.get(6))).to.equal(150);
+    expect(_.last(a2.get(6)).totalValue).to.equal(150);
+});
+
+it("test two sacks", ()=>{
+    let capacity1:number = 4;
+    let capacity0:number = 4;
+
+    let weights = [1, 2, 3, 4];
+    let values = [5, 5, 5, 5];
+    const k = new Knapsack(weights, values, capacity0);
+    const a = k.generateSolutions();
+    const sol = _.last(a.get(6));
+    //expect(_.last(a.get(6))).to.equal(150);
 });
 
 it("basic seq alingment", ()=>{
