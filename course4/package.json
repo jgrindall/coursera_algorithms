@@ -1,0 +1,24 @@
+{
+  "name": "week1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/closestpoints/app.js",
+  "scripts": {
+    "start": "tsc && node run",
+    "test": "tsc && node test"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "chai": "latest",
+    "mocha": "latest",
+    "lodash": "latest",
+    "typescript": "latest",
+    "ts-node": "latest"
+  },
+  "dependencies": {
+    "@types/mocha": "latest",
+    "@types/node": "latest",
+    "@types/lodash": "latest"
+  }
+}
