@@ -57,20 +57,21 @@ export class BellmanFord{
             console.log(i);
         }
         this.solutions[i] = new Map<string, SSPath>();
+        const prevSolution:SSRecord = this.solutions[i - 1];
         this.nodes.forEach(node=>{
-            const case1:SSPath = this.solutions[i - 1].get(node);
+            const case1:SSPath = prevSolution.get(node);
             const edges:WeightedEdge[] = this.graph.getEdgesInto(node);
             let minLength:number = Infinity;
             let minCase2:SSPath = null;
             edges.forEach(edge=>{
-                const path0:SSPath = this.solutions[i - 1].get(edge[0]);
-                const path:SSPath = {
-                    vertices:[...path0.vertices, node],
-                    length:path0.length + edge[2]
-                };
-                if(path.length < minLength){
-                    minLength = path.length;
-                    minCase2 = path;
+                const path0:SSPath = prevSolution.get(edge[0]);
+                const newLength = path0.length + edge[2];
+                if(newLength < minLength){
+                    minLength = newLength;
+                    minCase2 = {
+                        vertices:[...path0.vertices, node],
+                        length:newLength
+                    };
                 }
 
             });
