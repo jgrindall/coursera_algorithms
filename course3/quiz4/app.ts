@@ -2,6 +2,7 @@
 import * as _ from 'lodash';
 import fs from 'fs';
 import {Knapsack} from "./Knapsack";
+import {OptSearchTree} from "./OptSearchTree";
 
 const solve = (file:string, maxCols?:number)=>{
     fs.readFile(file, 'utf8', (err:any, data:string) => {
@@ -26,3 +27,12 @@ const solve = (file:string, maxCols?:number)=>{
 
 solve('./quiz4/k1.txt');
 solve('./quiz4/k2.txt', 2);
+
+let probabilities = [0.05, 0.4, 0.08, 0.04, 0.1, 0.1, 0.23];
+let opt = new OptSearchTree(probabilities);
+console.log(opt.generate());
+
+
+probabilities = [0.2, 0.05, 0.17, 0.1, 0.2, 0.03, 0.25];
+opt = new OptSearchTree(probabilities);
+console.log(opt.generate());

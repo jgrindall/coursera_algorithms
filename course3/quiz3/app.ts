@@ -95,3 +95,19 @@ fs.readFile('./quiz3/wis.txt', 'utf8', (err:any, data:string) => {
 
 
 })();
+
+
+let alphabet = ["a", "b", "c", "d", "e"];
+const correctAnswers:string[] = ["0", "10", "110", "111"];
+let weights = [0.28, 0.27, 0.2, 0.15, 0.1];
+const tree:string = new Huffman(alphabet, weights).generate();
+console.log('tree', tree);
+// tree -  (-(a)(b))    (-(c)(-(d)(e)))
+const node:Node<string> = stringToTree(tree);
+let totalWeight = 0;
+alphabet.forEach((a:string, i:number)=>{
+    const d = getDepth(node, a);
+    console.log(a, d);
+    totalWeight += d*weights[i];
+});
+console.log(totalWeight);

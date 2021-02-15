@@ -120,8 +120,6 @@ it("test from the lecture", ()=>{
     expect(a.get(4)[5].totalValue).to.equal(8);
     expect(a.get(4)[6].totalValue).to.equal(8);
 
-    console.log(a.get(4)[6]);
-
     expect(_eq(a.get(4)[6].weights, [2, 3])).to.equal(true);
 
 });
@@ -224,17 +222,6 @@ it("test optimal2", ()=>{
     expect(_.last(a2.get(6)).totalValue).to.equal(150);
 });
 
-it("test two sacks", ()=>{
-    let capacity1:number = 4;
-    let capacity0:number = 4;
-
-    let weights = [1, 2, 3, 4];
-    let values = [5, 5, 5, 5];
-    const k = new Knapsack(weights, values, capacity0);
-    const a = k.generateSolutions();
-    const sol = _.last(a.get(6));
-    //expect(_.last(a.get(6))).to.equal(150);
-});
 
 it("basic seq alingment", ()=>{
     let seq0 = 'a';
