@@ -424,4 +424,107 @@ describe("BellmanFord simple", () => {
 
     });
 
+
+    it("detect -ve cycle", () =>{
+        const hash:Hash = {
+            '1':[
+                ['1', '2', 0]
+            ],
+            '2':[
+                ['2', '1', -1]
+            ]
+        };
+        try{
+            const bf:SSRecord = new BellmanFord(hash).getSSSP("1");
+            expect.fail();
+        }
+        catch(e){
+            expect(e.message).to.equal("-ve cycle");
+        }
+        try{
+            const bf:Map<string, SSRecord> = BellmanFord.getAPSP(hash);
+            expect.fail();
+        }
+        catch(e){
+            expect(e.message).to.equal("-ve cycle");
+        }
+
+    });
+
+    const gLectureNeg:Hash = {
+        's': [
+            ['s', 'v', 2],
+            ['s', 'x', 4]
+        ],
+        'v': [
+            ['v', 'x', 1],
+            ['v', 'w', 2]
+        ],
+        'x': [
+            ['x', 't', 4]
+        ],
+        'w': [
+            ['w', 't', 2]
+        ],
+        't': [
+            ['t', 'v', -5]
+        ]
+    };
+
+    const gWebsiteNeg:Hash = {
+        'A': [
+            ['A', 'B', -1],
+            ['A', 'C', 4]
+        ],
+        'B': [
+            ['B', 'C', 3],
+            ['B', 'D', 2],
+            ['B', 'E', 2]
+        ],
+        'C': [
+            ['C', 'A', -6.5]
+        ],
+        'D': [
+            ['D', 'B', 1],
+            ['D', 'C', 5]
+        ],
+        'E': [
+            ['E', 'D', -3],
+        ]
+    };
+
+    it("detect -ve cycle 1 ", () =>{
+        try{
+            const bf:SSRecord = new BellmanFord(gLectureNeg).getSSSP("s");
+            expect.fail();
+        }
+        catch(e){
+            expect(e.message).to.equal("-ve cycle");
+        }
+        try{
+            const bf_all:Map<string, SSRecord> = BellmanFord.getAPSP(gLectureNeg);
+            expect.fail();
+        }
+        catch(e){
+            expect(e.message).to.equal("-ve cycle");
+        }
+    });
+
+    it("detect -ve cycle 2", () =>{
+        try{
+            const bf:SSRecord = new BellmanFord(gWebsiteNeg).getSSSP("A");
+            expect.fail();
+        }
+        catch(e){
+            expect(e.message).to.equal("-ve cycle");
+        }
+        try{
+            const bf_all:Map<string, SSRecord> = BellmanFord.getAPSP(gWebsiteNeg);
+            expect.fail();
+        }
+        catch(e){
+            expect(e.message).to.equal("-ve cycle");
+        }
+    });
+
 });

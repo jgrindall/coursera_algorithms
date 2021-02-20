@@ -93,7 +93,13 @@ export class BellmanFord{
         });
         return apsp;
     }
-
+    checkCycle(){
+        const nodes = this.graph.getNodes();
+        let n = nodes.length;
+        if(!recordEquals(this.solutions[n - 1], this.solutions[n])){
+            throw new Error("-ve cycle");
+        }
+    }
     getSSSP(source:string):SSRecord{
         const nodes = this.graph.getNodes();
         let n = nodes.length;
@@ -112,6 +118,7 @@ export class BellmanFord{
                     delete this.solutions[i - 2];
                 }
             }
+            this.checkCycle();
         }
 
         return this.solutions[n - 1];
