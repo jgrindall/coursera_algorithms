@@ -84,6 +84,16 @@ export class BellmanFord{
         });
     }
 
+    static getAPSP(h:Hash):Map<string, SSRecord>{
+        const bf:BellmanFord = new BellmanFord(h);
+        const nodes:string[] = bf.graph.getNodes();
+        const apsp:Map<string, SSRecord> = new Map<string, SSRecord>();
+        nodes.forEach(node=>{
+            apsp.set(node, bf.getSSSP(node));
+        });
+        return apsp;
+    }
+
     getSSSP(source:string):SSRecord{
         const nodes = this.graph.getNodes();
         let n = nodes.length;
