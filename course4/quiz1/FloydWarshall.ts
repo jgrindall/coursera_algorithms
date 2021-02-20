@@ -67,6 +67,22 @@ export class FloydWarshall{
             }
         }
     }
+    checkCycle(){
+        const nodes = this.graph.getNodes();
+        let n = nodes.length;
+        if(n >= 3){
+            for(let i = 0; i < n; i++){
+                if(this.getVal(i, i, n).length < 0){
+                    throw new Error("-ve cycle");
+                }
+            }
+        }
+        else if(n === 2){
+            if(this.getVal(0, 1, 0).length + this.getVal(1, 0, 0).length < 0){
+                throw new Error("-ve cycle");
+            }
+        }
+    }
     getAPSP():Map<string, SSPath>{
         const nodes = this.graph.getNodes();
         let n = nodes.length;
@@ -108,9 +124,11 @@ export class FloydWarshall{
                 this.fill(k);
                 this.solutions.delete(k - 2);
             }
+            this.checkCycle();
             return this.solutions.get(n);
         }
         else{
+            this.checkCycle();
             return this.solutions.get(0);
         }
     }

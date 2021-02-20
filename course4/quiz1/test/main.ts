@@ -448,6 +448,14 @@ describe("BellmanFord simple", () => {
         catch(e){
             expect(e.message).to.equal("-ve cycle");
         }
+        try{
+            const fw:Map<string, SSPath> = new FloydWarshall(hash).getAPSP();
+            console.log(fw);
+            //expect.fail();
+        }
+        catch(e){
+            //expect(e.message).to.equal("-ve cycle");
+        }
 
     });
 
@@ -508,6 +516,13 @@ describe("BellmanFord simple", () => {
         catch(e){
             expect(e.message).to.equal("-ve cycle");
         }
+        try{
+            const fw:Map<string, SSPath> = new FloydWarshall(gLectureNeg).getAPSP();
+            expect.fail();
+        }
+        catch(e){
+            expect(e.message).to.equal("-ve cycle");
+        }
     });
 
     it("detect -ve cycle 2", () =>{
@@ -520,6 +535,13 @@ describe("BellmanFord simple", () => {
         }
         try{
             const bf_all:Map<string, SSRecord> = BellmanFord.getAPSP(gWebsiteNeg);
+            expect.fail();
+        }
+        catch(e){
+            expect(e.message).to.equal("-ve cycle");
+        }
+        try{
+            const fw:Map<string, SSPath> = new FloydWarshall(gWebsiteNeg).getAPSP();
             expect.fail();
         }
         catch(e){
