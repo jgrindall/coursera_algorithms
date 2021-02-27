@@ -1,12 +1,6 @@
 import { Hash, AdjList, WeightedEdge, prune } from "./AdjList";
 import * as _ from "lodash";
-
-export type SSPath = {
-    vertices:string[],
-    length:number
-};
-
-export type SSRecord = Map<string, SSPath>;
+import {SSPath, SSRecord} from "./Types";
 
 export function pathEquals(ssPath1:SSPath, ssPath2:SSPath){
     return ssPath1.length === ssPath2.length && JSON.stringify(ssPath1.vertices) === JSON.stringify(ssPath2.vertices);

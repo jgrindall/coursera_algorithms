@@ -1,12 +1,6 @@
 import { Hash, AdjList, WeightedEdge, prune } from "./AdjList";
+import { SSPath, APSPRecord } from "./Types";
 import * as _ from "lodash";
-
-export type SSPath = {
-    vertices:string[],
-    length:number
-};
-
-export type APSPRecord = Map<number, Map<string, SSPath>>;
 
 export function pathEquals(ssPath1:SSPath, ssPath2:SSPath){
     return ssPath1.length === ssPath2.length && JSON.stringify(ssPath1.vertices) === JSON.stringify(ssPath2.vertices);
@@ -27,12 +21,14 @@ export class FloydWarshall{
     private graph:AdjList;
     private solutions:APSPRecord;
     private nodes:string[];
+    private options:any;
 
-    constructor(h:Hash){
+    constructor(h:Hash, options:any = {storeVertices: true}){
         const pruned:Hash = prune(h);
         this.graph = new AdjList(pruned);
         this.nodes = this.graph.getNodes();
         this.solutions = new Map<number, Map<string, SSPath>>();
+        this.options = _.defaults(options || {}, {storeVertices: true});
     }
     getVal(i:number, j:number, k:number):SSPath{
         return this.solutions.get(k).get(this.nodes[i] + "-" + this.nodes[j]);
@@ -42,6 +38,7 @@ export class FloydWarshall{
     }
     fill(k:number){
         const nodes = this.graph.getNodes();
+        const storeVertices = this.options.storeVertices;
         let n = nodes.length;
         for(let i = 0; i < n; i++){
             for(let j = 0; j < n; j++){
@@ -51,7 +48,7 @@ export class FloydWarshall{
                 const case2_2 = this.getVal(k - 1, j, k - 1); //k-1 to j
                 if(case1.length <= case2_1.length + case2_2.length){
                     this.setVal(i, j, k, {
-                        vertices:[...case1.vertices],
+                        vertices: storeVertices ? [...case1.vertices] : [],
                         length:case1.length
                     });
                 }
@@ -60,7 +57,7 @@ export class FloydWarshall{
                     case1_clone.pop(); // i->k and k->j
                     const joinedPath = [...case1_clone, ...case2_2.vertices];
                     this.setVal(i, j, k, {
-                        vertices:joinedPath,
+                        vertices:storeVertices ? joinedPath : [],
                         length:case2_1.length + case2_2.length
                     });
                 }
@@ -82,6 +79,22 @@ export class FloydWarshall{
                 throw new Error("-ve cycle");
             }
         }
+    }
+    getMinSP():SSPath{
+        const nodes = this.graph.getNodes();
+        const apsp:Map<string, SSPath> = this.getAPSP();
+        let minLength = Infinity;
+        let minPath:SSPath = null;
+        nodes.forEach(nodeI=>{
+            nodes.forEach(nodeJ=>{
+                const path:SSPath = apsp.get(nodeI + "-" + nodeJ);
+                if(path.length < minLength){
+                    minLength = path.length;
+                    minPath = path;
+                }
+            });
+        });
+        return minPath;
     }
     getAPSP():Map<string, SSPath>{
         const nodes = this.graph.getNodes();
@@ -118,11 +131,11 @@ export class FloydWarshall{
         }
         if(n > 2){
             for(let k = 1; k <= n; k++){
-                if(k % 20 === 0){
+                if(k % 10 === 0){
                     console.log("k", k);
                 }
                 this.fill(k);
-                this.solutions.delete(k - 2);
+                this.solutions.delete(k - 1);
             }
             this.checkCycle();
             return this.solutions.get(n);

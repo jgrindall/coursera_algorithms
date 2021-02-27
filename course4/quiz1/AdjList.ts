@@ -34,19 +34,26 @@ export class AdjList{
 
     private hash:Hash;
     private cachedEdgesIn:Map<string, WeightedEdge[]>;
+    private cachedNeighbours:Map<string, string[]>;
 
     constructor(hash?:Hash){
         this.hash = hash || {};
-        this.cachedEdgesIn = new Map<string, WeightedEdge[]>();
+        this.clearCache();
     }
-    getNodes(){
+    clearCache(){
+        this.cachedEdgesIn = new Map<string, WeightedEdge[]>();
+        this.cachedNeighbours = new Map<string, string[]>();
+    }
+    getNodes():string[]{
         return Object.keys(this.hash);
     }
     setHash(hash:Hash):void{
         this.hash = hash;
+        this.clearCache();
     }
     addNode(a:string):void{
         this.hash[a] = this.hash[a] || [];
+        this.clearCache();
     }
     getDegree(node:string){
         return this.hash[node].length;
@@ -72,7 +79,12 @@ export class AdjList{
         return !!this.hash[node0].find(edge => edge[1] === node1);
     }
     getNeighbours(a:string):Array<string>{
-        return this.hash[a].map((e:WeightedEdge) => e[1]);
+        if(this.cachedNeighbours.has(a)){
+            return this.cachedNeighbours.get(a);
+        }
+        const edges = this.hash[a].map((e:WeightedEdge) => e[1]);
+        this.cachedNeighbours.set(a, edges);
+        return edges
     }
     getEdgesInto(a:string):Array<WeightedEdge>{
         if(this.cachedEdgesIn.has(a)){
@@ -96,6 +108,7 @@ export class AdjList{
     addEdge(node0:string, node1:string, length:number):void{
         if(!this.hasEdge(node0, node1)){
             this.hash[node0].push([node0, node1, length]);
+            this.clearCache();
         }
     }
     toString():string{
