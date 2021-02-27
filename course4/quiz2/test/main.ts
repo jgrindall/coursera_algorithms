@@ -1,7 +1,7 @@
 import * as chai from 'chai';
-import {Hash, AdjList, prune} from "../AdjList";
+import {Hash} from "../AdjList";
 import * as _ from "lodash";
-import {getSubsetsOfSize, getSubsetsOfSizeThatContainA, getAllSubsetsThatContainA, TSP} from "../TSP";
+import {TSP, getSubsets, getElements, removeElement, SubsetDefinition} from "../TSP";
 
 let expect = chai.expect;
 
@@ -21,48 +21,60 @@ const choose = (n:number, r:number)=>{
     return factorial(n)/( factorial(n - r) * factorial(r) );
 };
 
+const _eq = (a:Array<number>, b:Array<number>):boolean=>{
+    if(a.length !== b.length){
+        return false;
+    }
+    for(let i = 0; i < a.length; i++){
+        if(a[i] !== b[i]){
+            return false;
+        }
+    }
+    return true;
+}
+
 describe("getSubsetsOfSize", () => {
 
-    const testCount = (a:number, b:number, m:number)=>{
-        const results:number[][] = getSubsetsOfSize(a, b, m);
-        expect(results.length).to.equal(choose(b - a + 1, m));
-    };
-
-    const testCount2 = (a:number, b:number, m:number)=>{
-        const results:number[][] = getSubsetsOfSizeThatContainA(a, b, m);
-        expect(results.length).to.equal(choose(b - a, m - 1));
-    };
-
-    const testCount3 = (a:number, b:number,)=>{
-        const results:number[][] = getAllSubsetsThatContainA(a, b);
-        let expected = 1; //size 1
-        for(let size = 2; size <= b - a + 1; size++){
-            expected += choose(b - a, size - 1);
-        }
-        expect(results.length).to.equal(expected);
-    };
-
-    it("getSubsetsOfSize", () =>{
-        testCount(3, 7, 1);
-        testCount(3, 7, 2);
-        testCount(3, 7, 4);
-        testCount(3, 7, 5);
+    it("test getElements", () =>{
+        expect(_eq(getElements(10, 7), [6, 4])).to.equal(true);
+        expect(_eq(getElements(33, 7), [7, 2])).to.equal(true);
+        expect(_eq(getElements(64, 7), [1])).to.equal(true);
+        expect(_eq(getElements(80, 7), [3, 1])).to.equal(true);
     });
 
-    it("getSubsetsOfSizeThatContainA", () =>{
-        testCount2(3, 7, 1);
-        testCount2(3, 7, 2);
-        testCount2(3, 7, 4);
-        testCount2(3, 7, 5);
+    const testSubsets = (N:number)=>{
+        const grouped = getSubsets(N);
+        const numbers:number[] = [...grouped.keys()];
+        expect(_eq(numbers, _.range(1, N + 1))).to.equal(true);
+        let total:number = 0;
+        numbers.forEach(number=>{
+            const s:SubsetDefinition[] = grouped.get(number);
+            s.forEach(k=>{
+                const elements:number[] = getElements(k, N);
+                expect(elements.includes(1)).to.equal(true);
+            });
+            total += s.length;
+        });
+        expect(total).to.equal(Math.pow(2, N - 1));
+    };
+
+    it("test getSubsets", () =>{
+        testSubsets(3);
+        testSubsets(4);
+        testSubsets(5);
+        testSubsets(6);
+        testSubsets(7);
+        testSubsets(8);
     });
 
-    it("getAllSubsetsThatContainA", () =>{
-        testCount3(3, 7);
-        testCount3(4, 7);
-        testCount3(5, 7);
-        testCount3(6, 7);
+    it("test removeElement", () =>{
+        expect(removeElement(10, 7, 4)).to.equal(2);
+        expect(removeElement(10, 7, 6)).to.equal(8);
+        expect(removeElement(33, 7, 2)).to.equal(1);
+        expect(removeElement(33, 7, 7)).to.equal(32);
+        expect(removeElement(80, 7, 1)).to.equal(16);
+        expect(removeElement(80, 7, 3)).to.equal(64);
     });
-
 });
 
 const g0:Hash = {
