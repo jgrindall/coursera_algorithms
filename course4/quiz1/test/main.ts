@@ -1,8 +1,10 @@
 import * as chai from 'chai';
 import {Hash, AdjList, prune} from "../AdjList";
 import * as _ from "lodash";
-import {BellmanFord, SSRecord, recordEquals, pathEquals} from "../BellmanFord";
-import {FloydWarshall, SSPath} from "../FloydWarshall";
+import {BellmanFord, recordEquals, pathEquals} from "../BellmanFord";
+import {FloydWarshall} from "../FloydWarshall";
+import { SSRecord, SSPath} from "../Types";
+import {Johnson} from "../Johnson";
 
 let expect = chai.expect;
 
@@ -80,6 +82,30 @@ const gWebsite:Hash = {
     ],
     'E': [
         ['E', 'D', -3],
+    ]
+};
+
+const gLecture2:Hash = {
+    'a': [
+        ['a', 'b', -2]
+    ],
+    'b': [
+        ['b', 'c', -1]
+    ],
+    'c': [
+        ['c', 'a', 4],
+        ['c', 'x', 2],
+        ['c', 'y', -3]
+    ],
+    'x': [
+
+    ],
+    'y': [
+
+    ],
+    'z': [
+        ['z', 'x', 1],
+        ['z', 'y', -4]
     ]
 };
 
@@ -239,6 +265,9 @@ describe("BellmanFord simple", () => {
 
         const fw:Map<string, SSPath> = new FloydWarshall(hash).getAPSP();
         expect(pathEquals(fw.get("1-1"), {vertices:["1"], length:0})).to.equal(true);
+
+        const minPath:SSPath = new FloydWarshall(hash).getMinSP();
+        expect(minPath.length).to.equal(0);
     });
 
     it("simple test, all pairs", () =>{
@@ -269,6 +298,9 @@ describe("BellmanFord simple", () => {
         expect(pathEquals(fw.get("1-2"), p2)).to.equal(true);
         expect(pathEquals(fw.get("2-1"), p4)).to.equal(true);
         expect(pathEquals(fw.get("2-2"), p3)).to.equal(true);
+
+        const minPath:SSPath = new FloydWarshall(g0).getMinSP();
+        expect(minPath.length).to.equal(0);
     });
 
     it("simple test, all pairs", () =>{
@@ -330,6 +362,9 @@ describe("BellmanFord simple", () => {
         expect(pathEquals(fw.get("3-1"), p7)).to.equal(true);
         expect(pathEquals(fw.get("3-2"), p8)).to.equal(true);
         expect(pathEquals(fw.get("3-3"), p9)).to.equal(true);
+
+        const minPath:SSPath = new FloydWarshall(g1).getMinSP();
+        expect(minPath.length).to.equal(0);
     });
 
     it("simple test from lecture, all pairs", () =>{
@@ -395,6 +430,9 @@ describe("BellmanFord simple", () => {
         expect(pathEquals(fw.get("w-s"), p_ws)).to.equal(true);
         expect(pathEquals(fw.get("t-t"), p_tt)).to.equal(true);
 
+        const minPath:SSPath = new FloydWarshall(gLecture).getMinSP();
+        expect(minPath.length).to.equal(0);
+
     });
 
     it("simple test from geeksforgeeks, all pairs", () =>{
@@ -422,8 +460,104 @@ describe("BellmanFord simple", () => {
         expect((fw.get("D-C").length)).to.equal(4);
         expect((fw.get("E-B").length)).to.equal(-2);
 
+        const minPath:SSPath = new FloydWarshall(gWebsite).getMinSP();
+        expect(minPath.length).to.equal(-3);
+
     });
 
+    it("simple test from lecture2, all pairs", () =>{
+
+        const p_ca = {
+            vertices:["c", "a"],
+            length:4
+        };
+        const p_cb = {
+            vertices:["c", "a", "b"],
+            length:2
+        };
+        const p_cc = {
+            vertices:["c"],
+            length:0
+        };
+        const p_cx = {
+            vertices:["c", "x"],
+            length:2
+        };
+        const p_cy = {
+            vertices:["c", "y"],
+            length:-3
+        };
+
+        const p_cz = {
+            vertices:[],
+            length:Infinity
+        };
+
+        const bf:Map<string, SSRecord> = BellmanFord.getAPSP(gLecture2);
+        expect(pathEquals(bf.get("c").get("a"), p_ca)).to.equal(true);
+        expect(pathEquals(bf.get("c").get("b"), p_cb)).to.equal(true);
+        expect(pathEquals(bf.get("c").get("c"), p_cc)).to.equal(true);
+        expect(pathEquals(bf.get("c").get("x"), p_cx)).to.equal(true);
+        expect(pathEquals(bf.get("c").get("y"), p_cy)).to.equal(true);
+        expect(pathEquals(bf.get("c").get("z"), p_cz)).to.equal(true);
+
+        const fw:Map<string, SSPath> = new FloydWarshall(gLecture2).getAPSP();
+        expect(pathEquals(fw.get("c-a"), p_ca)).to.equal(true);
+        expect(pathEquals(fw.get("c-b"), p_cb)).to.equal(true);
+        expect(pathEquals(fw.get("c-c"), p_cc)).to.equal(true);
+        expect(pathEquals(fw.get("c-x"), p_cx)).to.equal(true);
+        expect(pathEquals(fw.get("c-y"), p_cy)).to.equal(true);
+        expect(pathEquals(fw.get("c-z"), p_cz)).to.equal(true);
+
+    });
+
+    it("Johnson reweighting", () =>{
+        const j:Johnson = new Johnson(gLecture2);
+        j.adjustGraph();
+        const hash:Hash = j.getAdjustedHash();
+        const gLecture2Adj:Hash = {
+            'a': [
+                ['a', 'b', 0]
+            ],
+            'b': [
+                ['b', 'c', 0]
+            ],
+            'c': [
+                ['c', 'a', 1],
+                ['c', 'x', 0],
+                ['c', 'y', 0]
+            ],
+            'x': [
+
+            ],
+            'y': [
+
+            ],
+            'z': [
+                ['z', 'x', 2],
+                ['z', 'y', 2]
+            ]
+        };
+        expect(JSON.stringify(hash)).to.equal(JSON.stringify(gLecture2Adj));
+    });
+
+    it("Johnson", () =>{
+        const j:Johnson = new Johnson(gLecture2);
+        const r:SSRecord = j.getAPSP();
+        expect(r.get("a-a").length).to.equal(0);
+        expect(r.get("a-c").length).to.equal(-3);
+        expect(r.get("a-x").length).to.equal(-1);
+        expect(r.get("a-y").length).to.equal(-6);
+        expect(r.get("b-x").length).to.equal(1);
+        expect(r.get("b-y").length).to.equal(-4);
+        expect(r.get("c-b").length).to.equal(2);
+        expect(r.get("c-c").length).to.equal(0);
+        expect(r.get("x-y").length).to.equal(Infinity);
+        expect(r.get("y-a").length).to.equal(Infinity);
+        expect(r.get("z-x").length).to.equal(1);
+        expect(r.get("z-y").length).to.equal(-4);
+        expect(r.get("z-b").length).to.equal(Infinity);
+    });
 
     it("detect -ve cycle", () =>{
         const hash:Hash = {
@@ -450,13 +584,19 @@ describe("BellmanFord simple", () => {
         }
         try{
             const fw:Map<string, SSPath> = new FloydWarshall(hash).getAPSP();
-            console.log(fw);
-            //expect.fail();
+            expect.fail();
         }
         catch(e){
-            //expect(e.message).to.equal("-ve cycle");
+            expect(e.message).to.equal("-ve cycle");
         }
-
+        try{
+            const j:Johnson = new Johnson(hash);
+            const r:SSRecord = j.getAPSP();
+            expect.fail();
+        }
+        catch(e){
+            expect(e.message).to.equal("-ve cycle");
+        }
     });
 
     const gLectureNeg:Hash = {
@@ -523,6 +663,14 @@ describe("BellmanFord simple", () => {
         catch(e){
             expect(e.message).to.equal("-ve cycle");
         }
+        try{
+            const j:Johnson = new Johnson(gLectureNeg);
+            const r:SSRecord = j.getAPSP();
+            expect.fail();
+        }
+        catch(e){
+            expect(e.message).to.equal("-ve cycle");
+        }
     });
 
     it("detect -ve cycle 2", () =>{
@@ -542,6 +690,14 @@ describe("BellmanFord simple", () => {
         }
         try{
             const fw:Map<string, SSPath> = new FloydWarshall(gWebsiteNeg).getAPSP();
+            expect.fail();
+        }
+        catch(e){
+            expect(e.message).to.equal("-ve cycle");
+        }
+        try{
+            const j:Johnson = new Johnson(gWebsiteNeg);
+            const r:SSRecord = j.getAPSP();
             expect.fail();
         }
         catch(e){
