@@ -19,13 +19,6 @@ const testTree = (alphabet, weights, correctAnswers)=>{
     expect(totalWeight).to.equal(correctAnswerWeight);
 };
 
-const padLeft = (len:number, padder:string, input:string)=>{
-    while(input.length < len){
-        input = padder + input;
-    }
-    return input;
-};
-
 const toBin = (n:number, len:number):Array<boolean>=>{
     let remainders:Array<number> = [];
     while(n >= 1){
